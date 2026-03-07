@@ -5,28 +5,22 @@
 // Model Context Protocol.  Run with:  bun run src/mcp/server.ts
 // ---------------------------------------------------------------------------
 
+import Anthropic from "@anthropic-ai/sdk";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { and, desc, eq, gte, type SQL, sql } from "drizzle-orm";
 import { z } from "zod";
-import Anthropic from "@anthropic-ai/sdk";
-
+import { getConfig } from "../config.ts";
 import { db } from "../db/client.ts";
 import {
-  items,
-  collections,
-  briefs,
-  type Item,
-} from "../db/schema.ts";
-import {
+  addAnnotation,
+  getItem,
+  getRecentItems,
   searchItems,
   similarItems,
-  getRecentItems,
-  getItem,
-  addAnnotation,
 } from "../db/queries.ts";
+import { briefs, collections, type Item, items } from "../db/schema.ts";
 import { embed } from "../ingest/embedder.ts";
-import { getConfig } from "../config.ts";
-import { desc, and, eq, gte, sql, type SQL } from "drizzle-orm";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -40,8 +34,10 @@ function formatItem(item: Item): string {
   parts.push(`Source: ${item.source}`);
   parts.push(`Type: ${item.itemType}`);
   if (item.url) parts.push(`URL: ${item.url}`);
-  if (item.publishedAt) parts.push(`Published: ${item.publishedAt.toISOString()}`);
-  if (item.topics && item.topics.length > 0) parts.push(`Topics: ${item.topics.join(", ")}`);
+  if (item.publishedAt)
+    parts.push(`Published: ${item.publishedAt.toISOString()}`);
+  if (item.topics && item.topics.length > 0)
+    parts.push(`Topics: ${item.topics.join(", ")}`);
   parts.push(`ID: ${item.id}`);
   return parts.join("\n");
 }
@@ -93,9 +89,19 @@ server.tool(
     "Returns intelligence items matching the query, ranked by relevance.",
   {
     query: z.string().describe("The search query string"),
-    source: z.string().optional().describe("Filter by source (e.g. 'arxiv', 'rss')"),
-    type: z.string().optional().describe("Filter by item type (e.g. 'paper', 'article')"),
-    limit: z.number().optional().default(10).describe("Maximum number of results to return"),
+    source: z
+      .string()
+      .optional()
+      .describe("Filter by source (e.g. 'arxiv', 'rss')"),
+    type: z
+      .string()
+      .optional()
+      .describe("Filter by item type (e.g. 'paper', 'article')"),
+    limit: z
+      .number()
+      .optional()
+      .default(10)
+      .describe("Maximum number of results to return"),
   },
   async ({ query, source, type, limit }) => {
     try {
@@ -152,9 +158,19 @@ server.tool(
   "Retrieve the most recent intelligence items from the knowledge base, " +
     "optionally filtered by source or item type.",
   {
-    source: z.string().optional().describe("Filter by source (e.g. 'arxiv', 'rss')"),
-    type: z.string().optional().describe("Filter by item type (e.g. 'paper', 'article')"),
-    limit: z.number().optional().default(20).describe("Maximum number of items to return"),
+    source: z
+      .string()
+      .optional()
+      .describe("Filter by source (e.g. 'arxiv', 'rss')"),
+    type: z
+      .string()
+      .optional()
+      .describe("Filter by item type (e.g. 'paper', 'article')"),
+    limit: z
+      .number()
+      .optional()
+      .default(20)
+      .describe("Maximum number of items to return"),
   },
   async ({ source, type, limit }) => {
     try {
@@ -167,7 +183,12 @@ server.tool(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return {
-        content: [{ type: "text" as const, text: `Failed to fetch recent items: ${message}` }],
+        content: [
+          {
+            type: "text" as const,
+            text: `Failed to fetch recent items: ${message}`,
+          },
+        ],
         isError: true,
       };
     }
@@ -209,18 +230,21 @@ server.tool(
       if (item.annotations && item.annotations.length > 0) {
         const annotationBlock = item.annotations
           .map(
-            (a) =>
-              `  [${a.createdAt?.toISOString() ?? "unknown"}] ${a.note}`,
+            (a) => `  [${a.createdAt?.toISOString() ?? "unknown"}] ${a.note}`,
           )
           .join("\n");
-        parts.push(`\nAnnotations (${item.annotations.length}):\n${annotationBlock}`);
+        parts.push(
+          `\nAnnotations (${item.annotations.length}):\n${annotationBlock}`,
+        );
       }
 
       return { content: [{ type: "text" as const, text: parts.join("\n") }] };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return {
-        content: [{ type: "text" as const, text: `Failed to get item: ${message}` }],
+        content: [
+          { type: "text" as const, text: `Failed to get item: ${message}` },
+        ],
         isError: true,
       };
     }
@@ -258,7 +282,12 @@ server.tool(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return {
-        content: [{ type: "text" as const, text: `Failed to save annotation: ${message}` }],
+        content: [
+          {
+            type: "text" as const,
+            text: `Failed to save annotation: ${message}`,
+          },
+        ],
         isError: true,
       };
     }
@@ -274,7 +303,10 @@ server.tool(
   "Create a new research collection for organizing related intelligence items.",
   {
     name: z.string().describe("Name of the collection"),
-    description: z.string().optional().describe("Optional description of the collection's purpose"),
+    description: z
+      .string()
+      .optional()
+      .describe("Optional description of the collection's purpose"),
   },
   async ({ name, description }) => {
     try {
@@ -301,7 +333,12 @@ server.tool(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return {
-        content: [{ type: "text" as const, text: `Failed to create collection: ${message}` }],
+        content: [
+          {
+            type: "text" as const,
+            text: `Failed to create collection: ${message}`,
+          },
+        ],
         isError: true,
       };
     }
@@ -320,7 +357,9 @@ server.tool(
     topics: z
       .array(z.string())
       .optional()
-      .describe("Optional list of topic tags to filter items (e.g. ['llm-security', 'supply-chain'])"),
+      .describe(
+        "Optional list of topic tags to filter items (e.g. ['llm-security', 'supply-chain'])",
+      ),
     time_range_hours: z
       .number()
       .optional()
@@ -465,7 +504,12 @@ Write the brief in clear, professional language. Reference specific items by the
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return {
-        content: [{ type: "text" as const, text: `Failed to generate brief: ${message}` }],
+        content: [
+          {
+            type: "text" as const,
+            text: `Failed to generate brief: ${message}`,
+          },
+        ],
         isError: true,
       };
     }

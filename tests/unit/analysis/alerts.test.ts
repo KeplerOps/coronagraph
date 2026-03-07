@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 
 // ---------------------------------------------------------------------------
 // Mocks -- must be declared before importing the module under test
@@ -40,8 +40,11 @@ mock.module("../../../src/config.ts", () => ({
 // Import module under test (after mocks)
 // ---------------------------------------------------------------------------
 
+import type {
+  AlertEvaluation,
+  AlertUrgency,
+} from "../../../src/analysis/alerts.ts";
 import { evaluateAlerts } from "../../../src/analysis/alerts.ts";
-import type { AlertEvaluation, AlertUrgency } from "../../../src/analysis/alerts.ts";
 
 // ---------------------------------------------------------------------------
 // Helpers

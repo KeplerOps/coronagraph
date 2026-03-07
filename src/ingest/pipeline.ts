@@ -4,10 +4,10 @@
 // ---------------------------------------------------------------------------
 
 import type { Collector, RawItem } from "../collectors/base.ts";
-import { summarize } from "./summarizer.ts";
-import { embed } from "./embedder.ts";
 import { insertItem } from "../db/queries.ts";
 import type { NewItem } from "../db/schema.ts";
+import { embed } from "./embedder.ts";
+import { summarize } from "./summarizer.ts";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -41,19 +41,14 @@ export async function ingestFromCollector(
   console.log(`[ingest] Fetching from ${collector.source}...`);
   const rawItems = await collector.fetch();
   result.fetched = rawItems.length;
-  console.log(
-    `[ingest] Got ${rawItems.length} items from ${collector.source}`,
-  );
+  console.log(`[ingest] Got ${rawItems.length} items from ${collector.source}`);
 
   for (const raw of rawItems) {
     try {
       await processItem(raw, collector.source);
       result.ingested++;
     } catch (err) {
-      console.error(
-        `[ingest] Error processing item ${raw.sourceId}:`,
-        err,
-      );
+      console.error(`[ingest] Error processing item ${raw.sourceId}:`, err);
       result.errors++;
     }
   }
@@ -73,11 +68,7 @@ async function processItem(raw: RawItem, source: string): Promise<void> {
   let summary = raw.content?.slice(0, 200) || "";
   let topics = raw.topics ?? [];
 
-  const llmResult = await summarize(
-    raw.title,
-    raw.content || "",
-    raw.itemType,
-  );
+  const llmResult = await summarize(raw.title, raw.content || "", raw.itemType);
 
   if (llmResult) {
     summary = llmResult.summary;

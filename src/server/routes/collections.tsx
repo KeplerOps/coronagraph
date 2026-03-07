@@ -1,14 +1,14 @@
 import { Hono } from "hono";
-import BaseLayout from "../layouts/base.tsx";
+import type { FC } from "hono/jsx";
 import {
-  getCollections,
-  getCollection,
-  createCollection,
   type CollectionWithCount,
+  createCollection,
+  getCollection,
+  getCollections,
 } from "../../db/queries-web.ts";
 import { ItemCard } from "../components/item-card.tsx";
+import BaseLayout from "../layouts/base.tsx";
 import { formatDate, relativeTime } from "../lib/format.ts";
-import type { FC } from "hono/jsx";
 
 const collectionsApp = new Hono();
 
@@ -150,9 +150,7 @@ collectionsApp.post("/collections", async (c) => {
 
   if (typeof name !== "string" || !name.trim()) {
     return c.html(
-      <p class="text-sm text-red-400 py-2">
-        Please enter a collection name.
-      </p>,
+      <p class="text-sm text-red-400 py-2">Please enter a collection name.</p>,
       400,
     );
   }

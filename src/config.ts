@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().default("postgresql://coronagraph:coronagraph@localhost:5432/coronagraph"),
+  DATABASE_URL: z
+    .string()
+    .default("postgresql://coronagraph:coronagraph@localhost:5432/coronagraph"),
   PORT: z.coerce.number().default(3000),
   ANTHROPIC_API_KEY: z.string().optional(),
   INOREADER_APP_ID: z.string().optional(),

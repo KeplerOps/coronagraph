@@ -15,7 +15,10 @@
         { "href": "https://example-blog.com/zero-day-exploits-browsers" }
       ],
       "alternate": [
-        { "href": "https://example-blog.com/zero-day-exploits-browsers", "type": "text/html" }
+        {
+          "href": "https://example-blog.com/zero-day-exploits-browsers",
+          "type": "text/html"
+        }
       ],
       "summary": {
         "direction": "ltr",
@@ -44,7 +47,10 @@
         { "href": "https://ai-security-journal.com/state-of-ai-security-2025" }
       ],
       "alternate": [
-        { "href": "https://ai-security-journal.com/state-of-ai-security-2025", "type": "text/html" }
+        {
+          "href": "https://ai-security-journal.com/state-of-ai-security-2025",
+          "type": "text/html"
+        }
       ],
       "summary": {
         "direction": "ltr",

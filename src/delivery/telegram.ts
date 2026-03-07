@@ -222,9 +222,7 @@ export async function sendAlertNotification(
 // Convenience: send to the default configured chat
 // ---------------------------------------------------------------------------
 
-export async function sendToDefaultChat(
-  text: string,
-): Promise<TelegramResult> {
+export async function sendToDefaultChat(text: string): Promise<TelegramResult> {
   const config = getConfig();
 
   if (!config.TELEGRAM_CHAT_ID) {
