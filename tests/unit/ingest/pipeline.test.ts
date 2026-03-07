@@ -17,27 +17,13 @@ import {
   spyOn,
 } from "bun:test";
 import type { Collector, RawItem } from "../../../src/collectors/base.ts";
+import { setupAnthropicMock } from "../../helpers/mock-anthropic.ts";
 
 // ---------------------------------------------------------------------------
 // Mocks -- must be declared before importing the module under test
 // ---------------------------------------------------------------------------
 
-const mockCreate = mock(() =>
-  Promise.resolve({
-    content: [
-      {
-        type: "text" as const,
-        text: '{"summary": "AI summary", "topics": ["new-topic"]}',
-      },
-    ],
-  }),
-);
-
-mock.module("@anthropic-ai/sdk", () => ({
-  default: class MockAnthropic {
-    messages = { create: mockCreate };
-  },
-}));
+const fakeAnthropic = setupAnthropicMock();
 
 const mockInsertItem = mock(() =>
   Promise.resolve({
@@ -84,6 +70,7 @@ mock.module("../../../src/db/queries.ts", () => ({
 const { ingestFromCollector, ingestAll } = await import(
   "../../../src/ingest/pipeline.ts"
 );
+const { _resetClient } = await import("../../../src/ingest/summarizer.ts");
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -130,21 +117,17 @@ describe("pipeline", () => {
   let fetchSpy: ReturnType<typeof spyOn>;
 
   beforeEach(() => {
-    mockCreate.mockClear();
     mockInsertItem.mockClear();
     currentConfig = { ...defaultConfig };
 
-    // Restore default implementations
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: '{"summary": "AI summary", "topics": ["new-topic"]}',
-          },
-        ],
-      }),
+    // Reset the summarizer singleton so it picks up the mock
+    _resetClient();
+    // Reset Anthropic mock to default state
+    fakeAnthropic.resetCreate();
+    fakeAnthropic.setTextResponse(
+      '{"summary": "AI summary", "topics": ["new-topic"]}',
     );
+
     mockInsertItem.mockImplementation(() =>
       Promise.resolve({
         id: "test-id",
@@ -194,15 +177,8 @@ describe("pipeline", () => {
   // -----------------------------------------------------------------------
 
   it("merges LLM topics with raw topics via deduplication", async () => {
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: '{"summary": "AI summary", "topics": ["existing-topic", "new-topic", "another-topic"]}',
-          },
-        ],
-      }),
+    fakeAnthropic.setTextResponse(
+      '{"summary": "AI summary", "topics": ["existing-topic", "new-topic", "another-topic"]}',
     );
 
     const items = [makeRawItem({ topics: ["existing-topic"] })];
@@ -228,9 +204,9 @@ describe("pipeline", () => {
 
   it("falls back to content truncation when summarize returns null", async () => {
     // Make the Anthropic API throw, so summarize returns null
-    mockCreate.mockImplementation(() =>
-      Promise.reject(new Error("API unavailable")),
-    );
+    fakeAnthropic.messages.create = async () => {
+      throw new Error("API unavailable");
+    };
 
     const content = "A".repeat(300);
     const items = [makeRawItem({ content, topics: ["original"] })];

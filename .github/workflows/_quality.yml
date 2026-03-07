@@ -79,19 +79,33 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Check for terraform directory
+        id: check
+        run: |
+          if [ -d "terraform" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "::notice::No terraform/ directory found, skipping validation"
+          fi
+
       - uses: hashicorp/setup-terraform@v3
+        if: steps.check.outputs.exists == 'true'
         with:
           terraform_version: "1.14.6"
 
       - name: Terraform fmt
+        if: steps.check.outputs.exists == 'true'
         run: terraform fmt -check -recursive
         working-directory: terraform
 
       - name: Terraform init (backend=false)
+        if: steps.check.outputs.exists == 'true'
         run: terraform init -backend=false
         working-directory: terraform
 
       - name: Terraform validate
+        if: steps.check.outputs.exists == 'true'
         run: terraform validate
         working-directory: terraform
 

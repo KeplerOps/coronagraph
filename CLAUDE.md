@@ -43,3 +43,6 @@ Bun runtime, Hono web framework, Drizzle ORM, PostgreSQL + pgvector, Anthropic C
 ## Package Management
 - Always use the package manager to install dependencies, do not add versions manually.
 - Always search for the most current version of GitHub actions before adding them to workflows.
+
+## Fix Pre-Existing Failures
+- The fact a test failure, bug, or other issue is "pre-existing" does not mean you can ignore it. You must fix it.
