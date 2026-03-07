@@ -46,3 +46,5 @@ Bun runtime, Hono web framework, Drizzle ORM, PostgreSQL + pgvector, Anthropic C
 
 ## Fix Pre-Existing Failures
 - The fact a test failure, bug, or other issue is "pre-existing" does not mean you can ignore it. You must fix it.
+
+NEVER add Claude attribution to issues, commits, comments, PRs, or any other documentation.
