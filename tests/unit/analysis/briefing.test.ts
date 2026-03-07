@@ -1,4 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from "bun:test";
 
 // ---------------------------------------------------------------------------
 // Mocks -- must be declared before importing the module under test
@@ -216,9 +224,7 @@ describe("generateMorningBrief", () => {
       "Friday",
       "Saturday",
     ];
-    const containsWeekday = weekdays.some((day) =>
-      result!.title.includes(day),
-    );
+    const containsWeekday = weekdays.some((day) => result!.title.includes(day));
     expect(containsWeekday).toBe(true);
 
     // It should contain a year

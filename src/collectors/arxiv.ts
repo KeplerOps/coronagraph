@@ -92,7 +92,7 @@ export class ArxivCollector implements Collector {
       url.searchParams.set("max_results", String(MAX_RESULTS));
 
       const res = await fetch(url.toString(), {
-        headers: { "Accept": "application/atom+xml" },
+        headers: { Accept: "application/atom+xml" },
       });
 
       if (!res.ok) {

@@ -1,0 +1,135 @@
+name: Deploy
+
+on:
+  pull_request:
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ============================================================================
+  # CHANGE DETECTION
+  # ============================================================================
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+      terraform: ${{ steps.filter.outputs.terraform }}
+      environment: ${{ steps.env.outputs.environment }}
+      is_dev: ${{ steps.env.outputs.is_dev }}
+      skip_quality: ${{ steps.skip.outputs.skip_quality }}
+      skip_tests: ${{ steps.skip.outputs.skip_tests }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            app:
+              - 'src/**'
+              - 'tests/**'
+              - 'package.json'
+              - 'bun.lock'
+              - 'Dockerfile'
+              - 'biome.json'
+              - '.github/workflows/deploy.yml'
+              - '.github/workflows/_quality.yml'
+            terraform:
+              - 'terraform/**'
+              - '.github/workflows/_terraform.yml'
+              - '.github/workflows/deploy.yml'
+
+      - name: Set environment
+        id: env
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            ENV="${{ github.base_ref == 'main' && 'prod' || 'dev' }}"
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            ENV="dev"
+          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            ENV="dev"
+          else
+            ENV="prod"
+          fi
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+          echo "is_dev=$( [ \"$ENV\" == \"dev\" ] && echo true || echo false )" >> $GITHUB_OUTPUT
+
+      - name: Check for skip flags
+        id: skip
+        env:
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          REF: ${{ github.ref }}
+        run: |
+          SKIP_QUALITY="false"
+          SKIP_TESTS="false"
+
+          # Only allow skip on dev
+          if ([ "$EVENT_NAME" == "pull_request" ] && [ "$BASE_REF" == "dev" ]) || \
+             ([ "$EVENT_NAME" == "push" ] && [ "$REF" == "refs/heads/dev" ]); then
+
+            if [ "$EVENT_NAME" == "pull_request" ]; then
+              COMMIT_MSG=$(git log "$PR_SHA" -1 --pretty=%B)
+            else
+              COMMIT_MSG=$(git log HEAD -1 --pretty=%B)
+            fi
+
+            if echo "$COMMIT_MSG" | grep -qi "\[skip quality\]"; then
+              SKIP_QUALITY="true"
+              echo "::warning::Skipping quality checks (commit message contains [skip quality])"
+            fi
+
+            if echo "$COMMIT_MSG" | grep -qi "\[skip tests\]"; then
+              SKIP_TESTS="true"
+              echo "::warning::Skipping tests (commit message contains [skip tests])"
+            fi
+          fi
+
+          echo "skip_quality=$SKIP_QUALITY" >> $GITHUB_OUTPUT
+          echo "skip_tests=$SKIP_TESTS" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # QUALITY → TERRAFORM (dependency chain)
+  # ============================================================================
+
+  quality:
+    name: Quality
+    needs: changes
+    if: |
+      needs.changes.outputs.skip_quality != 'true' &&
+      (needs.changes.outputs.app == 'true' ||
+       needs.changes.outputs.terraform == 'true' ||
+       github.event_name == 'workflow_dispatch')
+    uses: ./.github/workflows/_quality.yml
+    with:
+      skip_tests: ${{ needs.changes.outputs.skip_tests == 'true' }}
+
+  terraform:
+    name: Terraform
+    needs: [changes, quality]
+    if: |
+      always() &&
+      (needs.changes.outputs.terraform == 'true' || github.event_name == 'workflow_dispatch') &&
+      (needs.quality.result == 'success' || needs.quality.result == 'skipped')
+    uses: ./.github/workflows/_terraform.yml
+    with:
+      environment: ${{ needs.changes.outputs.environment }}
+      is_dev: ${{ needs.changes.outputs.is_dev == 'true' }}
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      AWS_ROLE_ARN_DEV: ${{ secrets.AWS_ROLE_ARN_DEV }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}

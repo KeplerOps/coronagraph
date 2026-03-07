@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import BaseLayout from "../layouts/base.tsx";
-import { getSources, getScheduledJobs } from "../../db/queries-web.ts";
-import { formatDate } from "../lib/format.ts";
 import type { FC } from "hono/jsx";
-import type { Source, ScheduledJob } from "../../db/schema.ts";
+import { getScheduledJobs, getSources } from "../../db/queries-web.ts";
+import type { ScheduledJob, Source } from "../../db/schema.ts";
+import BaseLayout from "../layouts/base.tsx";
+import { formatDate } from "../lib/format.ts";
 
 const settingsApp = new Hono();
 
@@ -25,9 +25,7 @@ const SourceRow: FC<{ source: Source }> = ({ source }) => (
       </div>
     </div>
     <div class="flex items-center gap-4 text-xs text-gray-500">
-      <span>
-        Every {source.fetchIntervalMinutes ?? 30}m
-      </span>
+      <span>Every {source.fetchIntervalMinutes ?? 30}m</span>
       <span>
         {source.lastFetched
           ? `Last: ${formatDate(source.lastFetched)}`
@@ -109,9 +107,7 @@ settingsApp.get("/settings", async (c) => {
         {/* Configured Sources */}
         <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-sm font-semibold text-white">
-              Configured Sources
-            </h2>
+            <h2 class="text-sm font-semibold text-white">Configured Sources</h2>
             <span class="text-xs text-gray-500">
               {sourcesData.length} source{sourcesData.length !== 1 ? "s" : ""}
             </span>
@@ -125,7 +121,8 @@ settingsApp.get("/settings", async (c) => {
             </div>
           ) : (
             <p class="text-sm text-gray-500 italic">
-              No sources configured. Add sources via the configuration file or API.
+              No sources configured. Add sources via the configuration file or
+              API.
             </p>
           )}
         </div>
@@ -147,7 +144,8 @@ settingsApp.get("/settings", async (c) => {
             </div>
           ) : (
             <p class="text-sm text-gray-500 italic">
-              No scheduled jobs configured. Jobs are defined in the platform configuration.
+              No scheduled jobs configured. Jobs are defined in the platform
+              configuration.
             </p>
           )}
         </div>
@@ -168,9 +166,7 @@ settingsApp.get("/settings", async (c) => {
               <span class="text-xs text-gray-500 font-medium w-32 flex-shrink-0 uppercase tracking-wider">
                 Database
               </span>
-              <span class="text-sm text-gray-300">
-                PostgreSQL + pgvector
-              </span>
+              <span class="text-sm text-gray-300">PostgreSQL + pgvector</span>
             </div>
             <div class="flex items-center gap-3 py-2 border-b border-gray-800/50">
               <span class="text-xs text-gray-500 font-medium w-32 flex-shrink-0 uppercase tracking-wider">

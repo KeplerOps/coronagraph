@@ -30,9 +30,21 @@ Bun runtime, Hono web framework, Drizzle ORM, PostgreSQL + pgvector, Anthropic C
 - ArXiv collector parses Atom XML via regex (no XML library)
 - Vector index is IVFFlat — requires sufficient rows before it becomes effective
 
+## Prohibited Actions
+- Never run `git commit` — the user commits manually
+
 ## Key Paths
 - `src/db/schema.ts` — all tables and indexes
 - `src/collectors/base.ts` — Collector interface contract
 - `src/ingest/pipeline.ts` — fetch → summarize → embed → store
 - `src/config.ts` — all env vars with Zod validation
 - `prompts/` — all LLM prompt templates
+
+## Package Management
+- Always use the package manager to install dependencies, do not add versions manually.
+- Always search for the most current version of GitHub actions before adding them to workflows.
+
+## Fix Pre-Existing Failures
+- The fact a test failure, bug, or other issue is "pre-existing" does not mean you can ignore it. You must fix it.
+
+NEVER add Claude attribution to issues, commits, comments, PRs, or any other documentation.

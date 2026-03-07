@@ -1,5 +1,5 @@
 import { mock } from "bun:test";
-import type { Item, Annotation } from "../../src/db/schema.ts";
+import type { Annotation, Item } from "../../src/db/schema.ts";
 import { makeItem } from "../fixtures/items.ts";
 
 /**

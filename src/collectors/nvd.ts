@@ -142,12 +142,14 @@ export class NvdCollector implements Collector {
       url.searchParams.set("resultsPerPage", "100");
 
       const res = await fetch(url.toString(), {
-        headers: { "Accept": "application/json" },
+        headers: { Accept: "application/json" },
       });
 
       if (!res.ok) {
         const body = await res.text().catch(() => "");
-        throw new Error(`NVD API responded ${res.status}: ${body.slice(0, 300)}`);
+        throw new Error(
+          `NVD API responded ${res.status}: ${body.slice(0, 300)}`,
+        );
       }
 
       const data = (await res.json()) as NvdResponse;

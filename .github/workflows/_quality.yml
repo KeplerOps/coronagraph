@@ -1,0 +1,132 @@
+name: Quality
+
+on:
+  workflow_call:
+    inputs:
+      skip_tests:
+        description: 'Skip test jobs (linting still runs)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  # ===========================================================================
+  # Linting and Formatting
+  # ===========================================================================
+
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Biome check (lint + format)
+        run: bunx @biomejs/biome check src/ tests/
+
+  # ===========================================================================
+  # Security
+  # ===========================================================================
+
+  sast:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Audit dependencies
+        run: bun audit || true
+
+  iac-security:
+    name: IaC Security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Checkov IaC Security
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: terraform/
+          framework: terraform
+          download_external_modules: true
+          quiet: true
+          compact: true
+          soft_fail: true
+
+  # ===========================================================================
+  # Terraform Validation
+  # ===========================================================================
+
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check for terraform directory
+        id: check
+        run: |
+          if [ -d "terraform" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "::notice::No terraform/ directory found, skipping validation"
+          fi
+
+      - uses: hashicorp/setup-terraform@v3
+        if: steps.check.outputs.exists == 'true'
+        with:
+          terraform_version: "1.14.6"
+
+      - name: Terraform fmt
+        if: steps.check.outputs.exists == 'true'
+        run: terraform fmt -check -recursive
+        working-directory: terraform
+
+      - name: Terraform init (backend=false)
+        if: steps.check.outputs.exists == 'true'
+        run: terraform init -backend=false
+        working-directory: terraform
+
+      - name: Terraform validate
+        if: steps.check.outputs.exists == 'true'
+        run: terraform validate
+        working-directory: terraform
+
+  # ===========================================================================
+  # Tests
+  # ===========================================================================
+
+  test:
+    name: Tests
+    if: ${{ !inputs.skip_tests }}
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run tests
+        run: bun test
