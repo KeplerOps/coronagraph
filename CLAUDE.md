@@ -30,6 +30,9 @@ Bun runtime, Hono web framework, Drizzle ORM, PostgreSQL + pgvector, Anthropic C
 - ArXiv collector parses Atom XML via regex (no XML library)
 - Vector index is IVFFlat — requires sufficient rows before it becomes effective
 
+## Prohibited Actions
+- Never run `git commit` — the user commits manually
+
 ## Key Paths
 - `src/db/schema.ts` — all tables and indexes
 - `src/collectors/base.ts` — Collector interface contract
