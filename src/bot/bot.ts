@@ -6,6 +6,7 @@
 
 import { Bot } from "grammy";
 import { getConfig } from "../config.ts";
+import { authMiddleware } from "./auth.ts";
 import { getRecentItems, searchItems, getItem } from "../db/queries.ts";
 import { generateMorningBrief } from "../analysis/briefing.ts";
 import {
@@ -28,6 +29,12 @@ if (!config.TELEGRAM_BOT_TOKEN) {
 }
 
 const bot = new Bot(config.TELEGRAM_BOT_TOKEN);
+
+// ---------------------------------------------------------------------------
+// Authorization -- must be registered before any command/message handlers
+// ---------------------------------------------------------------------------
+
+bot.use(authMiddleware());
 
 // ---------------------------------------------------------------------------
 // Active research sessions: chatId -> sessionId
