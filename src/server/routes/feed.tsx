@@ -85,8 +85,10 @@ feed.get("/feed/items", async (c) => {
   const source = c.req.query("source") ?? "";
   const type = c.req.query("type") ?? "";
   const q = c.req.query("q") ?? "";
-  const limit = parseInt(c.req.query("limit") ?? "30", 10);
-  const offset = parseInt(c.req.query("offset") ?? "0", 10);
+  const limitRaw = parseInt(c.req.query("limit") ?? "30", 10);
+  const offsetRaw = parseInt(c.req.query("offset") ?? "0", 10);
+  const limit = Math.min(Number.isNaN(limitRaw) ? 30 : Math.max(0, limitRaw), 200);
+  const offset = Number.isNaN(offsetRaw) ? 0 : Math.max(0, offsetRaw);
 
   let items;
   if (q) {

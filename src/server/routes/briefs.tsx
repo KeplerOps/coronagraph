@@ -5,6 +5,8 @@ import { formatDate, relativeTime } from "../lib/format.ts";
 import type { FC } from "hono/jsx";
 import type { Brief } from "../../db/schema.ts";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const briefsApp = new Hono();
 
 // ---------------------------------------------------------------------------
@@ -91,6 +93,11 @@ briefsApp.get("/briefs", async (c) => {
 
 briefsApp.get("/briefs/:id", async (c) => {
   const id = c.req.param("id");
+
+  if (!UUID_RE.test(id)) {
+    return c.text("Invalid brief ID", 400);
+  }
+
   const brief = await getBrief(id);
 
   if (!brief) {

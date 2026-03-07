@@ -39,9 +39,11 @@ import app from "../../src/server/app.ts";
 // Helpers
 // ---------------------------------------------------------------------------
 
+const VALID_UUID = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+
 function makeSampleItem(overrides: Record<string, unknown> = {}) {
   return {
-    id: "abc-123",
+    id: VALID_UUID,
     source: "cisa-kev",
     sourceId: "CVE-2024-9999",
     itemType: "vulnerability",
@@ -135,7 +137,7 @@ describe("GET /api/items/:id", () => {
   it("returns 404 with error message when item is not found", async () => {
     mockGetItem.mockResolvedValue(null);
 
-    const res = await app.request("/api/items/nonexistent-id");
+    const res = await app.request(`/api/items/${VALID_UUID}`);
 
     expect(res.status).toBe(404);
     const body = await res.json();
@@ -146,12 +148,12 @@ describe("GET /api/items/:id", () => {
     const sampleItem = makeSampleItem();
     mockGetItem.mockResolvedValue(sampleItem);
 
-    const res = await app.request("/api/items/abc-123");
+    const res = await app.request(`/api/items/${VALID_UUID}`);
 
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.data).toBeTruthy();
-    expect(body.data.id).toBe("abc-123");
+    expect(body.data.id).toBe(VALID_UUID);
     expect(body.data.title).toBe("Test Vulnerability");
   });
 });

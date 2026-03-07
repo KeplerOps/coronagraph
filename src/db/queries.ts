@@ -112,6 +112,9 @@ export async function similarItems(
   embedding: number[],
   limit = 10,
 ): Promise<(Item & { distance: number })[]> {
+  if (!embedding.every(Number.isFinite)) {
+    throw new Error("Invalid embedding");
+  }
   const vectorLiteral = `[${embedding.join(",")}]`;
 
   const results = await db
