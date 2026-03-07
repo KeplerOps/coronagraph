@@ -12,6 +12,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+        args: [--unsafe] # Allow custom YAML constructors (mkdocs plugins)
       - id: check-json
       - id: check-added-large-files
         args: [--maxkb=500]
@@ -19,7 +20,7 @@ repos:
       - id: detect-private-key
         exclude: ^tests/
 
-  # Terraform formatting
+  # Terraform formatting and validation
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.96.3
     hooks:
@@ -39,7 +40,7 @@ repos:
         pass_filenames: false
 
   # =============================================================================
-  # STAGE 2: Security
+  # STAGE 2: Security (SAST/DAST)
   # =============================================================================
 
   # Dependency audit
@@ -52,16 +53,33 @@ repos:
         files: (package\.json|bun\.lock)$
         pass_filenames: false
 
-  # IaC Security
+  # IaC Security (Terraform, Dockerfile)
   - repo: https://github.com/bridgecrewio/checkov
     rev: 3.2.346
     hooks:
       - id: checkov
         files: ^terraform/
         args: [--quiet, --compact, --directory, terraform/, --soft-fail]
+      - id: checkov
+        name: checkov (dockerfile)
+        files: ^Dockerfile
+        args: [--quiet, --compact, --file, Dockerfile, --soft-fail]
 
   # =============================================================================
-  # STAGE 3: Tests (slowest - run last)
+  # STAGE 3: Type Checking
+  # =============================================================================
+
+  - repo: local
+    hooks:
+      - id: typecheck
+        name: typecheck (tsc)
+        entry: bash -c 'bunx tsc --noEmit'
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+  # =============================================================================
+  # STAGE 4: Tests (slowest - run last)
   # =============================================================================
 
   - repo: local
