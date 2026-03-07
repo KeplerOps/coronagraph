@@ -1,5 +1,5 @@
 import { mock } from "bun:test";
-import type { Item, Annotation } from "../../src/db/schema.ts";
+import type { Item, Annotation, Source } from "../../src/db/schema.ts";
 import { makeItem } from "../fixtures/items.ts";
 
 /**
@@ -19,6 +19,16 @@ const defaultMocks = {
       note,
       createdAt: new Date("2025-01-15T12:00:00Z"),
     }) as Annotation,
+  upsertSource: async (input: { id: string; name: string; type: string }) =>
+    ({
+      id: input.id,
+      name: input.name,
+      type: input.type,
+      config: null,
+      enabled: true,
+      lastFetched: null,
+      fetchIntervalMinutes: 30,
+    }) as Source,
 };
 
 /**

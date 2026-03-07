@@ -84,6 +84,12 @@ const { ingestFromCollector, ingestAll } = await import(
 function makeCollector(source: string, items: RawItem[]): Collector {
   return {
     source,
+    sourceMetadata: {
+      id: source,
+      name: `Test ${source}`,
+      type: "api",
+      description: `Test collector for ${source}`,
+    },
     fetch: mock(() => Promise.resolve(items)),
   };
 }

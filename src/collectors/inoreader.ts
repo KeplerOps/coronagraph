@@ -67,6 +67,13 @@ interface InoreaderResponse {
 
 export class InoreaderCollector implements Collector {
   readonly source = "inoreader";
+  readonly sourceMetadata = {
+    id: "inoreader",
+    name: "Inoreader",
+    type: "feed",
+    url: "https://www.inoreader.com",
+    description: "Inoreader RSS aggregator — curated security and technology feeds",
+  };
 
   async fetch(): Promise<RawItem[]> {
     const cfg = getConfig();

@@ -81,6 +81,13 @@ export function extractUrl(xml: string): string | undefined {
 
 export class ArxivCollector implements Collector {
   readonly source = "arxiv";
+  readonly sourceMetadata = {
+    id: "arxiv",
+    name: "ArXiv",
+    type: "api",
+    url: "https://arxiv.org",
+    description: "ArXiv preprint server — recent papers from CS security, AI, and ML categories",
+  };
 
   async fetch(): Promise<RawItem[]> {
     try {

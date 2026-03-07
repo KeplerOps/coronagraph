@@ -3,9 +3,11 @@ import { db } from "./client";
 import {
   items,
   annotations,
+  sources,
   type NewItem,
   type Item,
   type Annotation,
+  type Source,
 } from "./schema";
 
 // ---------------------------------------------------------------------------
@@ -178,4 +180,42 @@ export async function addAnnotation(
     .returning();
 
   return annotation!;
+}
+
+// ---------------------------------------------------------------------------
+// upsertSource  --  insert or update a source record
+// ---------------------------------------------------------------------------
+
+export interface UpsertSourceInput {
+  id: string;
+  name: string;
+  type: string;
+  url?: string;
+  description?: string;
+}
+
+export async function upsertSource(input: UpsertSourceInput): Promise<Source> {
+  const config: Record<string, string> = {};
+  if (input.url) config.url = input.url;
+  if (input.description) config.description = input.description;
+
+  const [result] = await db
+    .insert(sources)
+    .values({
+      id: input.id,
+      name: input.name,
+      type: input.type,
+      config: Object.keys(config).length > 0 ? config : null,
+    })
+    .onConflictDoUpdate({
+      target: sources.id,
+      set: {
+        name: input.name,
+        type: input.type,
+        config: Object.keys(config).length > 0 ? config : null,
+      },
+    })
+    .returning();
+
+  return result!;
 }
