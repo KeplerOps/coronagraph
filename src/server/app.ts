@@ -2,7 +2,12 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { getRecentItems, getItem } from "../db/queries.ts";
 
+// Middleware
+import { apiAuth, webAuth } from "./middleware/auth.ts";
+import { csrfToken, csrfProtection } from "./middleware/csrf.ts";
+
 // Web dashboard routes
+import loginRoutes from "./routes/login.tsx";
 import feedRoutes from "./routes/feed.tsx";
 import itemRoutes from "./routes/item.tsx";
 import briefsRoutes from "./routes/briefs.tsx";
@@ -17,8 +22,11 @@ const app = new Hono();
 
 app.use("*", logger());
 
+// CSRF token generation for all routes (sets cookie + c.get("csrfToken"))
+app.use("*", csrfToken);
+
 // ---------------------------------------------------------------------------
-// Health check
+// Health check (unauthenticated)
 // ---------------------------------------------------------------------------
 
 app.get("/health", (c) => {
@@ -26,8 +34,16 @@ app.get("/health", (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// API: Items
+// Login/Logout routes (unauthenticated)
 // ---------------------------------------------------------------------------
+
+app.route("/", loginRoutes);
+
+// ---------------------------------------------------------------------------
+// API: Items (API key auth via Bearer token)
+// ---------------------------------------------------------------------------
+
+app.use("/api/*", apiAuth);
 
 app.get("/api/items", async (c) => {
   const source = c.req.query("source");
@@ -68,8 +84,19 @@ app.get("/api/items/:id", async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// Web Dashboard Routes
+// Web Dashboard Routes (cookie auth + CSRF protection on POST)
 // ---------------------------------------------------------------------------
+
+// Apply web auth to all dashboard routes
+app.use("/", webAuth);
+app.use("/items/*", webAuth);
+app.use("/briefs/*", webAuth);
+app.use("/collections/*", webAuth);
+app.use("/settings/*", webAuth);
+
+// Apply CSRF protection to POST requests on web routes
+app.use("/items/*/annotations", csrfProtection);
+app.use("/collections", csrfProtection);
 
 app.route("/", feedRoutes);
 app.route("/", itemRoutes);

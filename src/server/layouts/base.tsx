@@ -1,8 +1,9 @@
 import type { FC } from "hono/jsx";
 import { html } from "hono/html";
 
-const BaseLayout: FC<{ title?: string; children: any }> = ({
+const BaseLayout: FC<{ title?: string; showLogout?: boolean; children: any }> = ({
   title,
+  showLogout,
   children,
 }) => {
   return (
@@ -101,6 +102,14 @@ const BaseLayout: FC<{ title?: string; children: any }> = ({
                 <NavLink href="/briefs" label="Briefs" />
                 <NavLink href="/collections" label="Collections" />
                 <NavLink href="/settings" label="Settings" />
+                {showLogout && (
+                  <a
+                    href="/logout"
+                    class="px-3 py-1.5 text-sm text-gray-500 hover:text-red-400 hover:bg-gray-800 rounded-md transition-colors ml-2"
+                  >
+                    Logout
+                  </a>
+                )}
               </div>
             </div>
           </div>
