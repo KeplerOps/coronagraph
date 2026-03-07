@@ -1,0 +1,66 @@
+{
+  "direction": "ltr",
+  "id": "user/1234567890/state/com.google/reading-list",
+  "title": "Reading List",
+  "continuation": "abc123continuation",
+  "updated": 1705334400,
+  "items": [
+    {
+      "id": "tag:google.com,2005:reader/item/0000000000000001",
+      "crawlTimeMsec": "1705334400000",
+      "timestampUsec": "1705334400000000",
+      "published": 1705334400,
+      "title": "Understanding Zero-Day Exploits in Modern Browsers",
+      "canonical": [
+        { "href": "https://example-blog.com/zero-day-exploits-browsers" }
+      ],
+      "alternate": [
+        { "href": "https://example-blog.com/zero-day-exploits-browsers", "type": "text/html" }
+      ],
+      "summary": {
+        "direction": "ltr",
+        "content": "<p>A deep dive into the latest zero-day vulnerabilities discovered in <strong>Chromium-based browsers</strong>. This article examines the root causes, exploitation techniques, and mitigation strategies for CVE-2025-0100 and related vulnerabilities.</p><p>Key findings include the increasing use of <em>V8 type confusion</em> bugs as initial access vectors.</p>"
+      },
+      "categories": [
+        "user/1234567890/state/com.google/reading-list",
+        "user/1234567890/label/cybersecurity",
+        "user/1234567890/label/browser-security",
+        "user/1234567890/state/com.google/fresh"
+      ],
+      "origin": {
+        "streamId": "feed/https://example-blog.com/rss",
+        "title": "Example Security Blog",
+        "htmlUrl": "https://example-blog.com"
+      },
+      "author": "Jane Doe"
+    },
+    {
+      "id": "tag:google.com,2005:reader/item/0000000000000002",
+      "crawlTimeMsec": "1705248000000",
+      "timestampUsec": "1705248000000000",
+      "published": 1705248000,
+      "title": "The State of AI Security in 2025",
+      "canonical": [
+        { "href": "https://ai-security-journal.com/state-of-ai-security-2025" }
+      ],
+      "alternate": [
+        { "href": "https://ai-security-journal.com/state-of-ai-security-2025", "type": "text/html" }
+      ],
+      "summary": {
+        "direction": "ltr",
+        "content": "<h2>Executive Summary</h2><p>As AI systems become more prevalent in critical infrastructure, the attack surface has expanded dramatically. This report covers the top 10 AI-specific vulnerabilities identified in 2024, including <a href=\"https://example.com\">model poisoning</a>, prompt injection, and training data extraction attacks.</p>"
+      },
+      "categories": [
+        "user/1234567890/state/com.google/reading-list",
+        "user/1234567890/label/ai-security",
+        "user/1234567890/label/annual-report"
+      ],
+      "origin": {
+        "streamId": "feed/https://ai-security-journal.com/feed",
+        "title": "AI Security Journal",
+        "htmlUrl": "https://ai-security-journal.com"
+      },
+      "author": "John Smith"
+    }
+  ]
+}

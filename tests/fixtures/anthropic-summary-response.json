@@ -1,0 +1,18 @@
+{
+  "id": "msg_01XFDUDYJgAACzvnptvVoYEL",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "```json\n{\n  \"summary\": \"A critical remote code execution vulnerability was discovered in ExampleServer versions prior to 3.2.1, allowing unauthenticated attackers to execute arbitrary code via crafted HTTP requests to the upload endpoint.\",\n  \"topics\": [\"remote-code-execution\", \"web-security\", \"authentication-bypass\"],\n  \"severity\": \"critical\",\n  \"actionItems\": [\"Upgrade ExampleServer to version 3.2.1 or later\", \"Review upload endpoint access controls\", \"Monitor for exploitation attempts\"]\n}\n```"
+    }
+  ],
+  "model": "claude-sonnet-4-20250514",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 512,
+    "output_tokens": 128
+  }
+}

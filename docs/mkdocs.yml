@@ -1,0 +1,71 @@
+site_name: Coronagraph
+site_description: AI/ML and cybersecurity collection, analysis, and briefing tool
+site_url: https://coronagraph.dev
+repo_url: https://github.com/atomiklabs/coronagraph
+repo_name: atomiklabs/coronagraph
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+    - toc.follow
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - admonition
+  - tables
+  - attr_list
+  - def_list
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Data Flow: architecture/data-flow.md
+    - Infrastructure: architecture/infrastructure.md
+  - Components:
+    - Collectors: components/collectors.md
+    - Ingest Pipeline: components/ingest-pipeline.md
+    - Analysis: components/analysis.md
+    - Delivery: components/delivery.md
+    - Web Dashboard: components/web-dashboard.md
+    - MCP Server: components/mcp-server.md
+    - Telegram Bot: components/telegram-bot.md
+  - Data:
+    - Schema: data/schema.md
+    - Queries: data/queries.md
+  - Operations:
+    - Configuration: operations/configuration.md
+    - Running: operations/running.md
+    - Deployment: operations/deployment.md
+  - Roadmap: roadmap.md

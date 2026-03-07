@@ -1,0 +1,150 @@
+{
+  "resultsPerPage": 2,
+  "startIndex": 0,
+  "totalResults": 2,
+  "format": "NVD_CVE",
+  "version": "2.0",
+  "timestamp": "2025-01-15T18:00:00.000",
+  "vulnerabilities": [
+    {
+      "cve": {
+        "id": "CVE-2025-0001",
+        "sourceIdentifier": "cve@mitre.org",
+        "published": "2025-01-15T12:00:00.000",
+        "lastModified": "2025-01-15T14:00:00.000",
+        "vulnStatus": "Analyzed",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "A critical remote code execution vulnerability in ExampleServer before 3.2.1 allows unauthenticated attackers to execute arbitrary code via a crafted HTTP request to the /api/upload endpoint."
+          }
+        ],
+        "metrics": {
+          "cvssMetricV31": [
+            {
+              "source": "nvd@nist.gov",
+              "type": "Primary",
+              "cvssData": {
+                "version": "3.1",
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "attackVector": "NETWORK",
+                "attackComplexity": "LOW",
+                "privilegesRequired": "NONE",
+                "userInteraction": "NONE",
+                "scope": "UNCHANGED",
+                "confidentialityImpact": "HIGH",
+                "integrityImpact": "HIGH",
+                "availabilityImpact": "HIGH",
+                "baseScore": 9.8,
+                "baseSeverity": "CRITICAL"
+              },
+              "exploitabilityScore": 3.89,
+              "impactScore": 5.9
+            }
+          ]
+        },
+        "weaknesses": [
+          {
+            "source": "nvd@nist.gov",
+            "type": "Primary",
+            "description": [
+              {
+                "lang": "en",
+                "value": "CWE-94"
+              }
+            ]
+          },
+          {
+            "source": "cve@mitre.org",
+            "type": "Secondary",
+            "description": [
+              {
+                "lang": "en",
+                "value": "CWE-434"
+              }
+            ]
+          }
+        ],
+        "configurations": [
+          {
+            "nodes": [
+              {
+                "operator": "OR",
+                "negate": false,
+                "cpeMatch": [
+                  {
+                    "vulnerable": true,
+                    "criteria": "cpe:2.3:a:example:exampleserver:*:*:*:*:*:*:*:*",
+                    "versionEndExcluding": "3.2.1",
+                    "matchCriteriaId": "A1B2C3D4-E5F6-7890-ABCD-EF1234567890"
+                  },
+                  {
+                    "vulnerable": true,
+                    "criteria": "cpe:2.3:a:example:exampleserver:3.0.0:beta:*:*:*:*:*:*",
+                    "matchCriteriaId": "B2C3D4E5-F6A7-8901-BCDE-F12345678901"
+                  },
+                  {
+                    "vulnerable": true,
+                    "criteria": "cpe:2.3:o:example:exampleos:*:*:*:*:*:*:*:*",
+                    "versionStartIncluding": "1.0",
+                    "versionEndExcluding": "2.0",
+                    "matchCriteriaId": "C3D4E5F6-A7B8-9012-CDEF-123456789012"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "references": [
+          {
+            "url": "https://example.com/security/CVE-2025-0001",
+            "source": "cve@mitre.org"
+          }
+        ]
+      }
+    },
+    {
+      "cve": {
+        "id": "CVE-2025-0002",
+        "sourceIdentifier": "cve@mitre.org",
+        "published": "2025-01-14T08:00:00.000",
+        "lastModified": "2025-01-14T10:00:00.000",
+        "vulnStatus": "Analyzed",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "An information disclosure vulnerability in WidgetLib 1.0 through 1.4 allows authenticated users to read arbitrary files via directory traversal in the file preview feature."
+          }
+        ],
+        "metrics": {
+          "cvssMetricV2": [
+            {
+              "source": "nvd@nist.gov",
+              "type": "Primary",
+              "cvssData": {
+                "version": "2.0",
+                "vectorString": "AV:N/AC:L/Au:S/C:P/I:N/A:N",
+                "accessVector": "NETWORK",
+                "accessComplexity": "LOW",
+                "authentication": "SINGLE",
+                "confidentialityImpact": "PARTIAL",
+                "integrityImpact": "NONE",
+                "availabilityImpact": "NONE",
+                "baseScore": 5.0
+              },
+              "baseSeverity": "MEDIUM",
+              "exploitabilityScore": 8.0,
+              "impactScore": 2.9
+            }
+          ]
+        },
+        "references": [
+          {
+            "url": "https://example.com/security/CVE-2025-0002",
+            "source": "cve@mitre.org"
+          }
+        ]
+      }
+    }
+  ]
+}
