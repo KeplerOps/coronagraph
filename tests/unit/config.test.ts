@@ -28,6 +28,7 @@ const envSchema = z.object({
   EMBEDDING_API_KEY: z.string().optional(),
   EMBEDDING_MODEL: z.string().default("voyage-3"),
   EMBEDDING_DIMENSIONS: z.coerce.number().default(1024),
+  API_KEY: z.string().optional(),
 });
 
 describe("config", () => {
@@ -69,6 +70,7 @@ describe("config", () => {
       expect(config.RESEND_API_KEY).toBeUndefined();
       expect(config.EMAIL_TO).toBeUndefined();
       expect(config.EMBEDDING_API_KEY).toBeUndefined();
+      expect(config.API_KEY).toBeUndefined();
     });
 
     it("DATABASE_URL has correct default value", () => {
@@ -100,6 +102,7 @@ describe("config", () => {
         EMBEDDING_API_KEY: "voyage-key-xxx",
         EMBEDDING_MODEL: "voyage-3-lite",
         EMBEDDING_DIMENSIONS: "256",
+        API_KEY: "my-secret-api-key",
       };
 
       const config = envSchema.parse(env);
@@ -117,6 +120,7 @@ describe("config", () => {
       expect(config.EMBEDDING_API_KEY).toBe("voyage-key-xxx");
       expect(config.EMBEDDING_MODEL).toBe("voyage-3-lite");
       expect(config.EMBEDDING_DIMENSIONS).toBe(256);
+      expect(config.API_KEY).toBe("my-secret-api-key");
     });
 
     it("throws on invalid PORT (non-numeric string coerces to NaN)", () => {

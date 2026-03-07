@@ -14,6 +14,7 @@ const envSchema = z.object({
   EMBEDDING_API_KEY: z.string().optional(),
   EMBEDDING_MODEL: z.string().default("voyage-3"),
   EMBEDDING_DIMENSIONS: z.coerce.number().default(1024),
+  API_KEY: z.string().optional(),
 });
 
 export type Config = z.infer<typeof envSchema>;

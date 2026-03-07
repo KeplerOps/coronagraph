@@ -109,6 +109,7 @@ collectionsApp.get("/collections", async (c) => {
           hx-on--after-request="this.reset()"
           class="flex flex-col sm:flex-row gap-3"
         >
+          <input type="hidden" name="_csrf" value={c.get("csrfToken") ?? ""} />
           <input
             type="text"
             name="name"

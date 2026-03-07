@@ -201,6 +201,7 @@ item.get("/items/:id", async (c) => {
               hx-on--after-request="this.reset()"
               class="space-y-3"
             >
+              <input type="hidden" name="_csrf" value={c.get("csrfToken") ?? ""} />
               <textarea
                 name="note"
                 placeholder="Add a note..."
