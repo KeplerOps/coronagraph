@@ -132,3 +132,4 @@ jobs:
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
       AWS_ROLE_ARN_DEV: ${{ secrets.AWS_ROLE_ARN_DEV }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}

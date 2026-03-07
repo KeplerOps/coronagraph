@@ -46,8 +46,8 @@ Runs when Terraform files change:
 
 AWS authentication uses OIDC (no long-lived credentials):
 
-- **Dev** (`catalyst-dev` / 516608939870): `AWS_ROLE_ARN_DEV` secret
-- **Prod** (`catalyst-prod` / 410247952697): `AWS_ROLE_ARN` secret
+- **Dev**: `AWS_ROLE_ARN_DEV` secret
+- **Prod**: `AWS_ROLE_ARN` secret
 
 ## Pre-commit Hooks
 
@@ -99,16 +99,24 @@ Configuration in `biome.json`:
 
 | Secret | Description |
 |--------|-------------|
-| `AWS_ROLE_ARN` | IAM role ARN for prod Terraform operations |
-| `AWS_ROLE_ARN_DEV` | IAM role ARN for dev Terraform operations |
+| `AWS_ROLE_ARN` | IAM role ARN for prod Terraform operations (OIDC) |
+| `AWS_ROLE_ARN_DEV` | IAM role ARN for dev Terraform operations (OIDC) |
+| `DB_PASSWORD` | Master password for the RDS PostgreSQL database |
 
 ## AWS Infrastructure
 
+All infrastructure is in **us-east-2**.
+
 Each environment has:
 
-- **OIDC provider** for GitHub Actions (no static credentials)
+- **OIDC provider** for GitHub Actions (no long-lived credentials)
 - **IAM role** `github-actions-coronagraph` scoped to `repo:KeplerOps/coronagraph:*`
-- **S3 state bucket** `keplerops-tfstate-<account-id>` with versioning, encryption, public access blocked, and non-SSL denied
+- **S3 state bucket** with random suffix to prevent cost attacks
+
+| Environment | Account | State Bucket |
+|-------------|---------|-------------|
+| Dev | catalyst-dev (516608939870) | `keplerops-coronagraph-tfstate-dev-d2335c02` |
+| Prod | catalyst-prod (410247952697) | `keplerops-coronagraph-tfstate-prod-d2335c02` |
 
 Initialize Terraform with the appropriate backend:
 
