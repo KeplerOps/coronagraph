@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     key    = "coronagraph/terraform.tfstate"
-    region = "us-east-1"
+    region = "us-east-2"
   }
 }
 

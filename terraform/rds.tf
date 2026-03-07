@@ -91,14 +91,14 @@ resource "aws_db_instance" "coronagraph" {
   password = var.db_password
   port     = var.db_port
 
-  parameter_group_name = aws_db_parameter_group.coronagraph_pg16.name
-  db_subnet_group_name = aws_db_subnet_group.coronagraph.name
+  parameter_group_name   = aws_db_parameter_group.coronagraph_pg16.name
+  db_subnet_group_name   = aws_db_subnet_group.coronagraph.name
   vpc_security_group_ids = [aws_security_group.coronagraph_db.id]
 
-  publicly_accessible    = var.publicly_accessible
-  multi_az               = false
-  skip_final_snapshot    = true
-  deletion_protection    = false
+  publicly_accessible     = var.publicly_accessible
+  multi_az                = false
+  skip_final_snapshot     = true
+  deletion_protection     = false
   backup_retention_period = 7
 
   # Apply changes immediately in dev; set to false for production
