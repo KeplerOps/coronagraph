@@ -39,3 +39,7 @@ Bun runtime, Hono web framework, Drizzle ORM, PostgreSQL + pgvector, Anthropic C
 - `src/ingest/pipeline.ts` — fetch → summarize → embed → store
 - `src/config.ts` — all env vars with Zod validation
 - `prompts/` — all LLM prompt templates
+
+## Package Management
+- Always use the package manager to install dependencies, do not add versions manually.
+- Always search for the most current version of GitHub actions before adding them to workflows.

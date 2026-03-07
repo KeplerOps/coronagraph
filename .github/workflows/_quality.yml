@@ -6,8 +6,8 @@ on:
       skip_tests:
         description: 'Skip test jobs (linting still runs)'
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
 
 permissions:
   contents: read
@@ -21,7 +21,7 @@ jobs:
     name: Lint & Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -41,7 +41,7 @@ jobs:
     name: Dependency Audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -57,10 +57,10 @@ jobs:
     name: IaC Security
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Checkov IaC Security
-        uses: bridgecrewio/checkov-action@02a4c5d6a02367e5ea493c34c26b094302fd3f61 # v12
+        uses: bridgecrewio/checkov-action@v12
         with:
           directory: terraform/
           framework: terraform
@@ -77,11 +77,11 @@ jobs:
     name: Terraform Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.7.1"
+          terraform_version: "1.14.6"
 
       - name: Terraform fmt
         run: terraform fmt -check -recursive
@@ -101,11 +101,11 @@ jobs:
 
   test:
     name: Tests
-    if: ${{ !inputs.skip_tests }}
+    if: inputs.skip_tests != 'true'
     needs: [lint]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:

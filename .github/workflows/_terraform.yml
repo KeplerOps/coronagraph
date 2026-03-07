@@ -8,7 +8,7 @@ on:
         type: string
       is_dev:
         required: true
-        type: boolean
+        type: string
     secrets:
       AWS_ROLE_ARN:
         required: true
@@ -28,16 +28,16 @@ jobs:
       run:
         working-directory: terraform
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ inputs.is_dev && secrets.AWS_ROLE_ARN_DEV || secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ inputs.is_dev == 'true' && secrets.AWS_ROLE_ARN_DEV || secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.7.1"
+          terraform_version: "1.14.6"
 
       - run: terraform fmt -check -recursive
 
@@ -50,7 +50,7 @@ jobs:
 
       - name: Comment PR
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
@@ -74,16 +74,16 @@ jobs:
       run:
         working-directory: terraform
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ inputs.is_dev && secrets.AWS_ROLE_ARN_DEV || secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ inputs.is_dev == 'true' && secrets.AWS_ROLE_ARN_DEV || secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.7.1"
+          terraform_version: "1.14.6"
 
       - run: terraform init
 

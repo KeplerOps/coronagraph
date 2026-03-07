@@ -7,7 +7,7 @@ repos:
 
   # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -22,7 +22,7 @@ repos:
 
   # Terraform formatting and validation
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.96.3
+    rev: v1.105.0
     hooks:
       - id: terraform_fmt
         files: ^terraform/
@@ -55,7 +55,7 @@ repos:
 
   # IaC Security (Terraform, Dockerfile)
   - repo: https://github.com/bridgecrewio/checkov
-    rev: 3.2.346
+    rev: 3.2.507
     hooks:
       - id: checkov
         files: ^terraform/
