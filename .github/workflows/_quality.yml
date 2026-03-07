@@ -6,8 +6,8 @@ on:
       skip_tests:
         description: 'Skip test jobs (linting still runs)'
         required: false
-        type: string
-        default: 'false'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -101,7 +101,7 @@ jobs:
 
   test:
     name: Tests
-    if: inputs.skip_tests != 'true'
+    if: ${{ !inputs.skip_tests }}
     needs: [lint]
     runs-on: ubuntu-latest
     steps:

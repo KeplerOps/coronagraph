@@ -6,6 +6,11 @@ on:
     branches: [main, dev]
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
@@ -111,7 +116,7 @@ jobs:
        github.event_name == 'workflow_dispatch')
     uses: ./.github/workflows/_quality.yml
     with:
-      skip_tests: ${{ needs.changes.outputs.skip_tests }}
+      skip_tests: ${{ needs.changes.outputs.skip_tests == 'true' }}
 
   terraform:
     name: Terraform
@@ -123,7 +128,7 @@ jobs:
     uses: ./.github/workflows/_terraform.yml
     with:
       environment: ${{ needs.changes.outputs.environment }}
-      is_dev: ${{ needs.changes.outputs.is_dev }}
+      is_dev: ${{ needs.changes.outputs.is_dev == 'true' }}
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
       AWS_ROLE_ARN_DEV: ${{ secrets.AWS_ROLE_ARN_DEV }}
