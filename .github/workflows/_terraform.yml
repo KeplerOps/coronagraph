@@ -33,7 +33,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ inputs.is_dev && secrets.AWS_ROLE_ARN_DEV || secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1
+          aws-region: us-east-2
 
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -41,7 +41,7 @@ jobs:
 
       - run: terraform fmt -check -recursive
 
-      - run: terraform init
+      - run: terraform init -backend-config=backend-${{ inputs.environment }}.hcl
 
       - run: terraform validate
 
@@ -79,13 +79,13 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ inputs.is_dev && secrets.AWS_ROLE_ARN_DEV || secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1
+          aws-region: us-east-2
 
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.14.6"
 
-      - run: terraform init
+      - run: terraform init -backend-config=backend-${{ inputs.environment }}.hcl
 
       - run: terraform apply -auto-approve
 
