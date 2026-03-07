@@ -32,10 +32,13 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
+    "@hono/node-server": "^1.19.11",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "drizzle-orm": "^0.45.1",
+    "esbuild": "^0.27.3",
+    "express-rate-limit": "^8.3.0",
     "grammy": "^1.40.1",
-    "hono": "^4.12.3",
+    "hono": "^4.12.5",
     "postgres": "^3.4.8",
     "zod": "^4.3.6"
   }
