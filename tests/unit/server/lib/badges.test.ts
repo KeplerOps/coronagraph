@@ -1,8 +1,8 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "bun:test";
 import {
   sourceColor,
-  typeColor,
   sourceLabel,
+  typeColor,
   typeLabel,
 } from "../../../../src/server/lib/badges.ts";
 

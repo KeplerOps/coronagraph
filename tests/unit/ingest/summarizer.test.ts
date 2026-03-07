@@ -6,7 +6,7 @@
 // caused by Bun's global mock.module registry.
 // ---------------------------------------------------------------------------
 
-import { describe, it, expect, mock, beforeEach } from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { setupAnthropicMock } from "../../helpers/mock-anthropic.ts";
 
 // ---------------------------------------------------------------------------
@@ -65,7 +65,11 @@ describe("summarizer", () => {
       '{"summary": "A critical vulnerability was found.", "topics": ["web-security", "rce"]}',
     );
 
-    const result = await summarize("Test Title", "Test content", "vulnerability");
+    const result = await summarize(
+      "Test Title",
+      "Test content",
+      "vulnerability",
+    );
 
     expect(result).not.toBeNull();
     expect(result!.summary).toBe("A critical vulnerability was found.");

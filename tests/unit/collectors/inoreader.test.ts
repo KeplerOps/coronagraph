@@ -1,4 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn, mock } from "bun:test";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from "bun:test";
 
 // Mock config BEFORE importing the module under test
 mock.module("../../../src/config.ts", () => ({
@@ -12,9 +20,9 @@ mock.module("../../../src/config.ts", () => ({
 }));
 
 import {
-  stripHtml,
   extractTopics,
   InoreaderCollector,
+  stripHtml,
 } from "../../../src/collectors/inoreader.ts";
 
 // -- Helpers -----------------------------------------------------------------
@@ -83,8 +91,7 @@ describe("InoreaderCollector.fetch", () => {
         title: "Test Article Title",
         canonical: [{ href: "https://example.com/article" }],
         summary: {
-          content:
-            "<p>This is <b>HTML</b> content &amp; entities.</p>",
+          content: "<p>This is <b>HTML</b> content &amp; entities.</p>",
         },
         categories: [
           "user/1234567/label/Security",

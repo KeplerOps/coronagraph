@@ -1,20 +1,18 @@
-import { eq, desc, and, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, type SQL, sql } from "drizzle-orm";
 import { db } from "./client";
 import {
-  items,
-  annotations,
-  type NewItem,
-  type Item,
   type Annotation,
+  annotations,
+  type Item,
+  items,
+  type NewItem,
 } from "./schema";
 
 // ---------------------------------------------------------------------------
 // insertItem  --  upsert (insert or do nothing on source+source_id conflict)
 // ---------------------------------------------------------------------------
 
-export async function insertItem(
-  item: NewItem,
-): Promise<Item> {
+export async function insertItem(item: NewItem): Promise<Item> {
   const [inserted] = await db
     .insert(items)
     .values(item)
@@ -29,7 +27,9 @@ export async function insertItem(
     const [existing] = await db
       .select()
       .from(items)
-      .where(and(eq(items.source, item.source), eq(items.sourceId, item.sourceId)))
+      .where(
+        and(eq(items.source, item.source), eq(items.sourceId, item.sourceId)),
+      )
       .limit(1);
     return existing!;
   }
@@ -147,11 +147,7 @@ export async function similarItems(
 export async function getItem(
   id: string,
 ): Promise<(Item & { annotations: Annotation[] }) | null> {
-  const [item] = await db
-    .select()
-    .from(items)
-    .where(eq(items.id, id))
-    .limit(1);
+  const [item] = await db.select().from(items).where(eq(items.id, id)).limit(1);
 
   if (!item) return null;
 
