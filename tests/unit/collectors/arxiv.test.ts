@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import {
-  extractEntries,
-  tag,
+  ArxivCollector,
   extractArxivId,
   extractCategories,
+  extractEntries,
   extractUrl,
-  ArxivCollector,
+  tag,
 } from "../../../src/collectors/arxiv.ts";
 
 // -- Helpers -----------------------------------------------------------------

@@ -100,10 +100,7 @@ export function markdownToHtml(md: string): string {
   html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, "<ul>$1</ul>");
 
   // Links
-  html = html.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2">$1</a>',
-  );
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 
   // Paragraphs: double newlines become paragraph breaks
   html = html.replace(/\n\n/g, "</p><p>");
@@ -137,7 +134,9 @@ export async function sendEmail(
   const config = getConfig();
 
   if (!config.RESEND_API_KEY) {
-    console.log("[email] No RESEND_API_KEY configured, skipping email delivery");
+    console.log(
+      "[email] No RESEND_API_KEY configured, skipping email delivery",
+    );
     return { success: false, error: "RESEND_API_KEY not configured" };
   }
 

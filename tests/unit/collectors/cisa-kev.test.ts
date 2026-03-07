@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import {
-  parseDate,
-  nvdUrl,
   CisaKevCollector,
+  nvdUrl,
+  parseDate,
 } from "../../../src/collectors/cisa-kev.ts";
 
 // -- Helpers -----------------------------------------------------------------
@@ -124,9 +124,7 @@ describe("CisaKevCollector.fetch", () => {
   });
 
   it("returns empty array on API error", async () => {
-    fetchSpy.mockResolvedValueOnce(
-      new Response("Forbidden", { status: 403 }),
-    );
+    fetchSpy.mockResolvedValueOnce(new Response("Forbidden", { status: 403 }));
 
     const collector = new CisaKevCollector();
     const items = await collector.fetch();

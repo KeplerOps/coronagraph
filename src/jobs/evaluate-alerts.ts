@@ -6,13 +6,13 @@
 //   bun src/jobs/evaluate-alerts.ts --hours 2    # Custom lookback window
 // ---------------------------------------------------------------------------
 
-import { evaluateAlerts } from "../analysis/alerts.ts";
 import type { AlertEvaluation } from "../analysis/alerts.ts";
-import { sendAlertEmail } from "../delivery/email.ts";
-import type { AlertEmailData } from "../delivery/email.ts";
-import { sendAlertNotification } from "../delivery/telegram.ts";
-import type { TelegramAlertData } from "../delivery/telegram.ts";
+import { evaluateAlerts } from "../analysis/alerts.ts";
 import { getConfig } from "../config.ts";
+import type { AlertEmailData } from "../delivery/email.ts";
+import { sendAlertEmail } from "../delivery/email.ts";
+import type { TelegramAlertData } from "../delivery/telegram.ts";
+import { sendAlertNotification } from "../delivery/telegram.ts";
 
 function parseArgs(): { hoursBack: number } {
   const args = process.argv.slice(2);
@@ -51,7 +51,9 @@ function toTelegramAlerts(alerts: AlertEvaluation[]): TelegramAlertData[] {
 
 async function main(): Promise<void> {
   const { hoursBack } = parseArgs();
-  console.log(`[evaluate-alerts] Evaluating items from the last ${hoursBack} hours...`);
+  console.log(
+    `[evaluate-alerts] Evaluating items from the last ${hoursBack} hours...`,
+  );
   const start = Date.now();
 
   const alerts = await evaluateAlerts({ hoursBack });
@@ -72,9 +74,7 @@ async function main(): Promise<void> {
 
   // Log all alerts to console regardless
   for (const alert of alerts) {
-    console.log(
-      `  [${alert.urgency.toUpperCase()}] ${alert.item.title}`,
-    );
+    console.log(`  [${alert.urgency.toUpperCase()}] ${alert.item.title}`);
     console.log(`    Reason: ${alert.reason}`);
     console.log(`    Action: ${alert.recommendedAction}`);
   }

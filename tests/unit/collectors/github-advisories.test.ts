@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import {
   deriveTopics,
   GithubAdvisoriesCollector,
@@ -91,7 +91,10 @@ describe("GithubAdvisoriesCollector.fetch", () => {
       html_url: "https://github.com/advisories/GHSA-abcd-1234-efgh",
       published_at: "2024-01-15T10:00:00Z",
       updated_at: "2024-01-15T12:00:00Z",
-      cvss: { score: 8.1, vector_string: "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N" },
+      cvss: {
+        score: 8.1,
+        vector_string: "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+      },
       cwes: [{ cwe_id: "CWE-79", name: "XSS" }],
       identifiers: [
         { type: "CVE", value: "CVE-2024-5678" },
@@ -118,9 +121,7 @@ describe("GithubAdvisoriesCollector.fetch", () => {
     expect(item.itemType).toBe("advisory");
     expect(item.title).toBe("Critical XSS in example-lib");
     expect(item.content).toBe("A detailed description of the advisory.");
-    expect(item.url).toBe(
-      "https://github.com/advisories/GHSA-abcd-1234-efgh",
-    );
+    expect(item.url).toBe("https://github.com/advisories/GHSA-abcd-1234-efgh");
     expect(item.topics).toEqual(["cwe-79", "high"]);
     expect(item.publishedAt).toEqual(new Date("2024-01-15T10:00:00Z"));
     expect((item.meta as any).severity).toBe("high");

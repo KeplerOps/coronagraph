@@ -2,8 +2,8 @@
 // Inoreader RSS feed collector
 // ---------------------------------------------------------------------------
 
-import type { Collector, RawItem } from "./base.ts";
 import { getConfig } from "../config.ts";
+import type { Collector, RawItem } from "./base.ts";
 
 const STREAM_URL =
   "https://www.inoreader.com/reader/api/0/stream/contents/user/-/state/com.google/reading-list";
@@ -109,9 +109,9 @@ export class InoreaderCollector implements Collector {
 
     const res = await fetch(url.toString(), {
       headers: {
-        "AppId": appId,
-        "AppKey": appKey,
-        "Authorization": `Bearer ${token}`,
+        AppId: appId,
+        AppKey: appKey,
+        Authorization: `Bearer ${token}`,
       },
     });
 
