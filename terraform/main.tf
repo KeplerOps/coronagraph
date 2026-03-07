@@ -9,7 +9,6 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "keplerops-coronagraph-tfstate"
     key    = "coronagraph/terraform.tfstate"
     region = "us-east-1"
   }
