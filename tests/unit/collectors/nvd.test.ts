@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import {
-  toNvdDate,
+  extractAffected,
   extractCvss,
   extractCweIds,
-  extractAffected,
   NvdCollector,
+  toNvdDate,
 } from "../../../src/collectors/nvd.ts";
 
 // -- Helpers -----------------------------------------------------------------
@@ -22,7 +22,9 @@ describe("toNvdDate", () => {
 describe("extractCvss", () => {
   it("prefers V31 over V30 and V2", () => {
     const metrics = {
-      cvssMetricV31: [{ cvssData: { baseScore: 9.8, baseSeverity: "CRITICAL" } }],
+      cvssMetricV31: [
+        { cvssData: { baseScore: 9.8, baseSeverity: "CRITICAL" } },
+      ],
       cvssMetricV30: [{ cvssData: { baseScore: 7.5, baseSeverity: "HIGH" } }],
       cvssMetricV2: [{ cvssData: { baseScore: 5.0 } }],
     };
@@ -176,7 +178,8 @@ describe("NvdCollector.fetch", () => {
     const items = await collector.fetch();
 
     expect(items).toHaveLength(1);
-    const item = items[0]!;
+    if (!items[0]) throw new Error("Expected item");
+    const item = items[0];
     expect(item.sourceId).toBe("CVE-2024-1234");
     expect(item.itemType).toBe("vulnerability");
     expect(item.title).toStartWith("CVE-2024-1234:");
@@ -186,11 +189,10 @@ describe("NvdCollector.fetch", () => {
     expect(item.topics).toContain("cve");
     expect(item.topics).toContain("critical");
     expect(item.meta).toBeDefined();
-    expect((item.meta as any).cvss.score).toBe(9.8);
-    expect((item.meta as any).cwe).toEqual(["CWE-79"]);
-    expect((item.meta as any).affected).toEqual([
-      "cpe:2.3:a:vendor:product:*",
-    ]);
+    const meta = item.meta as Record<string, unknown>;
+    expect((meta.cvss as Record<string, unknown>).score).toBe(9.8);
+    expect(meta.cwe).toEqual(["CWE-79"]);
+    expect(meta.affected).toEqual(["cpe:2.3:a:vendor:product:*"]);
   });
 
   it("returns empty array on non-ok response", async () => {

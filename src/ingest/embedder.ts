@@ -46,7 +46,7 @@ export async function embed(text: string): Promise<number[] | null> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${config.EMBEDDING_API_KEY}`,
+        Authorization: `Bearer ${config.EMBEDDING_API_KEY}`,
       },
       body: JSON.stringify({
         model,

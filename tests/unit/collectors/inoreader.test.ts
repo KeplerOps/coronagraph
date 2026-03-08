@@ -1,4 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn, mock } from "bun:test";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from "bun:test";
 
 // Mock config BEFORE importing the module under test
 mock.module("../../../src/config.ts", () => ({
@@ -12,9 +20,9 @@ mock.module("../../../src/config.ts", () => ({
 }));
 
 import {
-  stripHtml,
   extractTopics,
   InoreaderCollector,
+  stripHtml,
 } from "../../../src/collectors/inoreader.ts";
 
 // -- Helpers -----------------------------------------------------------------
@@ -83,8 +91,7 @@ describe("InoreaderCollector.fetch", () => {
         title: "Test Article Title",
         canonical: [{ href: "https://example.com/article" }],
         summary: {
-          content:
-            "<p>This is <b>HTML</b> content &amp; entities.</p>",
+          content: "<p>This is <b>HTML</b> content &amp; entities.</p>",
         },
         categories: [
           "user/1234567/label/Security",
@@ -112,7 +119,8 @@ describe("InoreaderCollector.fetch", () => {
     const items = await collector.fetch();
 
     expect(items).toHaveLength(1);
-    const item = items[0]!;
+    if (!items[0]) throw new Error("Expected item");
+    const item = items[0];
     expect(item.sourceId).toBe(
       "tag:google.com,2005:reader/item/00000000deadbeef",
     );
@@ -125,8 +133,9 @@ describe("InoreaderCollector.fetch", () => {
     expect(item.content).toContain("HTML");
     expect(item.content).toContain("&");
     expect(item.topics).toEqual(["security"]);
-    expect((item.meta as any).origin).toBe("Example Blog");
-    expect((item.meta as any).originUrl).toBe("https://example.com");
+    const meta = item.meta as Record<string, unknown>;
+    expect(meta.origin).toBe("Example Blog");
+    expect(meta.originUrl).toBe("https://example.com");
     expect(item.publishedAt).toEqual(new Date(1705312800 * 1000));
   });
 

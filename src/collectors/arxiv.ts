@@ -22,7 +22,7 @@ export function extractEntries(xml: string): string[] {
   const re = /<entry>([\s\S]*?)<\/entry>/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(xml)) !== null) {
-    entries.push(m[1]!);
+    entries.push(m[1] ?? "");
   }
   return entries;
 }
@@ -35,7 +35,7 @@ export function tag(xml: string, name: string): string | undefined {
   const re = new RegExp(`<${name}[^>]*>([\\s\\S]*?)<\\/${name}>`, "m");
   const m = re.exec(xml);
   if (!m) return undefined;
-  return m[1]!.replace(/\s+/g, " ").trim();
+  return m[1]?.replace(/\s+/g, " ").trim();
 }
 
 /**
@@ -48,7 +48,7 @@ export function tag(xml: string, name: string): string | undefined {
 export function extractArxivId(raw: string): string {
   // Try to pull the ID portion from an abs URL
   const m = raw.match(/arxiv\.org\/abs\/(.+?)(?:v\d+)?$/);
-  if (m) return m[1]!;
+  if (m) return m[1] ?? raw;
   // Fallback: strip version suffix if present
   return raw.replace(/v\d+$/, "").trim();
 }
@@ -61,7 +61,7 @@ export function extractCategories(xml: string): string[] {
   const re = /<category[^>]+term="([^"]+)"/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(xml)) !== null) {
-    cats.push(m[1]!);
+    cats.push(m[1] ?? "");
   }
   return cats;
 }
@@ -81,6 +81,14 @@ export function extractUrl(xml: string): string | undefined {
 
 export class ArxivCollector implements Collector {
   readonly source = "arxiv";
+  readonly sourceMetadata = {
+    id: "arxiv",
+    name: "ArXiv",
+    type: "api",
+    url: "https://arxiv.org",
+    description:
+      "ArXiv preprint server — recent papers from CS security, AI, and ML categories",
+  };
 
   async fetch(): Promise<RawItem[]> {
     try {
@@ -92,7 +100,7 @@ export class ArxivCollector implements Collector {
       url.searchParams.set("max_results", String(MAX_RESULTS));
 
       const res = await fetch(url.toString(), {
-        headers: { "Accept": "application/atom+xml" },
+        headers: { Accept: "application/atom+xml" },
       });
 
       if (!res.ok) {

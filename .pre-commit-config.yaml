@@ -1,0 +1,92 @@
+fail_fast: true
+
+repos:
+  # =============================================================================
+  # STAGE 1: Fast checks (linting, formatting, syntax)
+  # =============================================================================
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--unsafe] # Allow custom YAML constructors (mkdocs plugins)
+      - id: check-json
+      - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-merge-conflict
+      - id: detect-private-key
+        exclude: ^tests/
+
+  # Terraform formatting and validation
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.105.0
+    hooks:
+      - id: terraform_fmt
+        files: ^terraform/
+      - id: terraform_validate
+        files: ^terraform/
+
+  # TypeScript/JavaScript linting and formatting
+  - repo: local
+    hooks:
+      - id: biome-check
+        name: biome (lint + format)
+        entry: bash -c 'bunx @biomejs/biome check --write src/ tests/'
+        language: system
+        files: \.(ts|tsx|js|jsx|json)$
+        pass_filenames: false
+
+  # =============================================================================
+  # STAGE 2: Security (SAST/DAST)
+  # =============================================================================
+
+  # Dependency audit
+  - repo: local
+    hooks:
+      - id: bun-audit
+        name: dependency audit
+        entry: bash -c 'bun audit 2>&1 || true'
+        language: system
+        files: (package\.json|bun\.lock)$
+        pass_filenames: false
+
+  # IaC Security (Terraform, Dockerfile)
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.2.507
+    hooks:
+      - id: checkov
+        files: ^terraform/
+        args: [--quiet, --compact, --directory, terraform/, --soft-fail]
+      - id: checkov
+        name: checkov (dockerfile)
+        files: ^Dockerfile
+        args: [--quiet, --compact, --file, Dockerfile, --soft-fail]
+
+  # =============================================================================
+  # STAGE 3: Type Checking
+  # =============================================================================
+
+  - repo: local
+    hooks:
+      - id: typecheck
+        name: typecheck (tsc)
+        entry: bash -c 'bunx tsc --noEmit'
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
+  # =============================================================================
+  # STAGE 4: Tests (slowest - run last)
+  # =============================================================================
+
+  - repo: local
+    hooks:
+      - id: bun-test
+        name: bun test
+        entry: bash -c 'bun test'
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false

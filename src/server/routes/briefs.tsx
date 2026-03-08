@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import BaseLayout from "../layouts/base.tsx";
-import { getRecentBriefs, getBrief } from "../../db/queries-web.ts";
-import { formatDate, relativeTime } from "../lib/format.ts";
 import type { FC } from "hono/jsx";
+import { getBrief, getRecentBriefs } from "../../db/queries-web.ts";
 import type { Brief } from "../../db/schema.ts";
+import BaseLayout from "../layouts/base.tsx";
+import { formatDate, relativeTime } from "../lib/format.ts";
 
 const briefsApp = new Hono();
 
@@ -98,9 +98,7 @@ briefsApp.get("/briefs/:id", async (c) => {
       <BaseLayout title="Not Found">
         <div class="text-center py-20">
           <div class="text-gray-600 text-5xl mb-4">404</div>
-          <h1 class="text-xl font-bold text-gray-300 mb-2">
-            Brief Not Found
-          </h1>
+          <h1 class="text-xl font-bold text-gray-300 mb-2">Brief Not Found</h1>
           <p class="text-sm text-gray-500 mb-6">
             This brief does not exist or has been removed.
           </p>

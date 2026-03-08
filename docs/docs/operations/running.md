@@ -14,6 +14,8 @@
 | `db:generate` | `bun run db:generate` | Generate Drizzle migration files |
 | `db:push` | `bun run db:push` | Push schema to database |
 | `db:studio` | `bun run db:studio` | Open Drizzle Studio (database GUI) |
+| `lint` | `bun run lint` | Run Biome linter and format check |
+| `lint:fix` | `bun run lint:fix` | Run Biome with auto-fix |
 | `typecheck` | `bun run typecheck` | Run TypeScript type checker |
 | `test` | `bun test` | Run all tests |
 | `test:unit` | `bun run test:unit` | Run unit tests only |

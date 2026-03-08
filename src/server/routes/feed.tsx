@@ -1,8 +1,9 @@
 import { Hono } from "hono";
-import BaseLayout from "../layouts/base.tsx";
+import { getRecentItems, searchItems } from "../../db/queries.ts";
+import type { Item } from "../../db/schema.ts";
 import { Filters } from "../components/filters.tsx";
 import { ItemCardList } from "../components/item-card.tsx";
-import { getRecentItems, searchItems } from "../../db/queries.ts";
+import BaseLayout from "../layouts/base.tsx";
 
 const feed = new Hono();
 
@@ -16,7 +17,7 @@ feed.get("/", async (c) => {
   const q = c.req.query("q") ?? "";
   const limit = 30;
 
-  let items;
+  let items: Item[];
   if (q) {
     const results = await searchItems(q, limit);
     // Apply additional filters if set
@@ -54,11 +55,7 @@ feed.get("/", async (c) => {
         </div>
 
         {/* Filters */}
-        <Filters
-          currentSource={source}
-          currentType={type}
-          currentQuery={q}
-        />
+        <Filters currentSource={source} currentType={type} currentQuery={q} />
       </div>
 
       {/* Items list */}
@@ -88,7 +85,7 @@ feed.get("/feed/items", async (c) => {
   const limit = parseInt(c.req.query("limit") ?? "30", 10);
   const offset = parseInt(c.req.query("offset") ?? "0", 10);
 
-  let items;
+  let items: Item[];
   if (q) {
     const results = await searchItems(q, limit + offset);
     // Apply additional filters if set

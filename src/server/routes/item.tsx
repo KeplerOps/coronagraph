@@ -1,15 +1,15 @@
 import { Hono } from "hono";
-import BaseLayout from "../layouts/base.tsx";
-import { getItem, addAnnotation } from "../../db/queries.ts";
+import type { FC } from "hono/jsx";
+import { addAnnotation, getItem } from "../../db/queries.ts";
 import type { Annotation } from "../../db/schema.ts";
-import { formatDate, relativeTime } from "../lib/format.ts";
+import BaseLayout from "../layouts/base.tsx";
 import {
   sourceColor,
-  typeColor,
   sourceLabel,
+  typeColor,
   typeLabel,
 } from "../lib/badges.ts";
-import type { FC } from "hono/jsx";
+import { formatDate, relativeTime } from "../lib/format.ts";
 
 const item = new Hono();
 
@@ -29,15 +29,11 @@ const MetaRow: FC<{ label: string; value: string }> = ({ label, value }) => (
 const AnnotationCard: FC<{ annotation: Annotation }> = ({ annotation }) => (
   <div class="bg-gray-900 border border-gray-800 rounded-lg p-3 fade-in">
     <p class="text-sm text-gray-300 whitespace-pre-wrap">{annotation.note}</p>
-    <p class="text-xs text-gray-600 mt-2">
-      {formatDate(annotation.createdAt)}
-    </p>
+    <p class="text-xs text-gray-600 mt-2">{formatDate(annotation.createdAt)}</p>
   </div>
 );
 
-const AnnotationList: FC<{ annotations: Annotation[] }> = ({
-  annotations,
-}) => (
+const AnnotationList: FC<{ annotations: Annotation[] }> = ({ annotations }) => (
   <div class="space-y-3">
     {annotations.map((a) => (
       <AnnotationCard annotation={a} />
@@ -131,6 +127,8 @@ item.get("/items/:id", async (c) => {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-label="External link"
+                  role="img"
                 >
                   <path
                     stroke-linecap="round"
@@ -250,9 +248,7 @@ item.get("/items/:id", async (c) => {
                 {Object.entries(meta).map(([key, val]) => (
                   <MetaRow
                     label={key}
-                    value={
-                      typeof val === "string" ? val : JSON.stringify(val)
-                    }
+                    value={typeof val === "string" ? val : JSON.stringify(val)}
                   />
                 ))}
               </div>
@@ -261,9 +257,7 @@ item.get("/items/:id", async (c) => {
 
           {/* Related items placeholder */}
           <div class="bg-gray-900 border border-gray-800 rounded-lg p-5">
-            <h2 class="text-sm font-semibold text-white mb-3">
-              Related Items
-            </h2>
+            <h2 class="text-sm font-semibold text-white mb-3">Related Items</h2>
             <p class="text-xs text-gray-500 italic">
               Related items will be shown here once vector similarity search is
               enabled for this item.
@@ -282,7 +276,7 @@ item.get("/items/:id", async (c) => {
 item.post("/items/:id/annotations", async (c) => {
   const id = c.req.param("id");
   const body = await c.req.parseBody();
-  const note = body["note"];
+  const note = body.note;
 
   if (typeof note !== "string" || !note.trim()) {
     return c.html(
@@ -296,10 +290,7 @@ item.post("/items/:id/annotations", async (c) => {
   // Re-fetch the full item to get updated annotations list
   const result = await getItem(id);
   if (!result) {
-    return c.html(
-      <p class="text-sm text-red-400">Item not found.</p>,
-      404,
-    );
+    return c.html(<p class="text-sm text-red-400">Item not found.</p>, 404);
   }
 
   return c.html(<AnnotationList annotations={result.annotations} />);

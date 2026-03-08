@@ -1,12 +1,11 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { getRecentItems, getItem } from "../db/queries.ts";
-
+import { getItem, getRecentItems } from "../db/queries.ts";
+import briefsRoutes from "./routes/briefs.tsx";
+import collectionsRoutes from "./routes/collections.tsx";
 // Web dashboard routes
 import feedRoutes from "./routes/feed.tsx";
 import itemRoutes from "./routes/item.tsx";
-import briefsRoutes from "./routes/briefs.tsx";
-import collectionsRoutes from "./routes/collections.tsx";
 import settingsRoutes from "./routes/settings.tsx";
 
 const app = new Hono();

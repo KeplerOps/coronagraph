@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import {
-  extractEntries,
-  tag,
+  ArxivCollector,
   extractArxivId,
   extractCategories,
+  extractEntries,
   extractUrl,
-  ArxivCollector,
+  tag,
 } from "../../../src/collectors/arxiv.ts";
 
 // -- Helpers -----------------------------------------------------------------
@@ -69,8 +69,9 @@ describe("extractArxivId", () => {
 
 describe("extractCategories", () => {
   it("collects category term attributes", () => {
-    const entry = extractEntries(sampleXml)[0]!;
-    const cats = extractCategories(entry);
+    const entries = extractEntries(sampleXml);
+    if (!entries[0]) throw new Error("Expected entry");
+    const cats = extractCategories(entries[0]);
     expect(cats).toEqual(["cs.AI", "cs.CR"]);
   });
 
@@ -81,8 +82,9 @@ describe("extractCategories", () => {
 
 describe("extractUrl", () => {
   it("finds alternate link", () => {
-    const entry = extractEntries(sampleXml)[0]!;
-    expect(extractUrl(entry)).toBe("http://arxiv.org/abs/2501.12345v1");
+    const entries = extractEntries(sampleXml);
+    if (!entries[0]) throw new Error("Expected entry");
+    expect(extractUrl(entries[0])).toBe("http://arxiv.org/abs/2501.12345v1");
   });
 
   it("falls back to id tag", () => {
@@ -116,7 +118,8 @@ describe("ArxivCollector.fetch", () => {
     const items = await collector.fetch();
 
     expect(items).toHaveLength(1);
-    const item = items[0]!;
+    if (!items[0]) throw new Error("Expected item");
+    const item = items[0];
     expect(item.sourceId).toBe("2501.12345");
     expect(item.itemType).toBe("paper");
     expect(item.title).toBe("Test Paper Title");

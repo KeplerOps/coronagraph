@@ -1,17 +1,17 @@
+import { sql } from "drizzle-orm";
 import {
-  pgTable,
-  uuid,
-  text,
   boolean,
+  customType,
+  index,
   integer,
   jsonb,
-  timestamp,
+  pgTable,
   primaryKey,
+  text,
+  timestamp,
   uniqueIndex,
-  index,
-  customType,
+  uuid,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 // ---------------------------------------------------------------------------
 // Custom pgvector type
@@ -29,10 +29,7 @@ const vector = customType<{
     return `[${value.join(",")}]`;
   },
   fromDriver(value: unknown): number[] {
-    return String(value)
-      .replace(/[\[\]]/g, "")
-      .split(",")
-      .map(Number);
+    return String(value).replace(/[[\]]/g, "").split(",").map(Number);
   },
 });
 
@@ -68,22 +65,19 @@ export const items = pgTable(
     index("items_item_type_idx").on(table.itemType),
 
     // GIN index on topics array
-    index("items_topics_idx")
-      .using("gin", table.topics)
-      ,
+    index("items_topics_idx").using("gin", table.topics),
 
     // IVFFlat index on embedding for vector cosine similarity
-    index("items_embedding_idx")
-      .using("ivfflat", sql`${table.embedding} vector_cosine_ops`)
-      ,
+    index("items_embedding_idx").using(
+      "ivfflat",
+      sql`${table.embedding} vector_cosine_ops`,
+    ),
 
     // GIN full-text search index on title + content
-    index("items_fts_idx")
-      .using(
-        "gin",
-        sql`to_tsvector('english', coalesce(${table.title}, '') || ' ' || coalesce(${table.content}, ''))`,
-      )
-      ,
+    index("items_fts_idx").using(
+      "gin",
+      sql`to_tsvector('english', coalesce(${table.title}, '') || ' ' || coalesce(${table.content}, ''))`,
+    ),
   ],
 );
 
@@ -140,9 +134,7 @@ export const collectionItems = pgTable(
       .references(() => items.id, { onDelete: "cascade" }),
     addedAt: timestamp("added_at", { withTimezone: true }).defaultNow(),
   },
-  (table) => [
-    primaryKey({ columns: [table.collectionId, table.itemId] }),
-  ],
+  (table) => [primaryKey({ columns: [table.collectionId, table.itemId] })],
 );
 
 // ---------------------------------------------------------------------------

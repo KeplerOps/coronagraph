@@ -68,4 +68,5 @@ nav:
     - Configuration: operations/configuration.md
     - Running: operations/running.md
     - Deployment: operations/deployment.md
+    - CI/CD: operations/ci-cd.md
   - Roadmap: roadmap.md

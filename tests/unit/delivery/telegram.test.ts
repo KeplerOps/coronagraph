@@ -2,7 +2,15 @@
 // Tests for src/delivery/telegram.ts
 // ---------------------------------------------------------------------------
 
-import { describe, it, expect, mock, beforeEach, afterEach, spyOn } from "bun:test";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from "bun:test";
 
 // ---------------------------------------------------------------------------
 // Mocks -- must be declared before importing the module under test.
@@ -34,7 +42,6 @@ const {
   splitMessage,
   sendMessage,
   sendBrief,
-  sendAlertNotification,
   sendToDefaultChat,
   sendBriefToDefaultChat,
 } = await import("../../../src/delivery/telegram.ts");
