@@ -121,7 +121,7 @@ function formatItemShort(item: Item, index?: number): string {
   if (item.summary) {
     const summary = escapeMarkdown(
       item.summary.length > 150
-        ? item.summary.slice(0, 147) + "..."
+        ? `${item.summary.slice(0, 147)}...`
         : item.summary,
     );
     line += `   ${summary}\n`;
@@ -166,7 +166,7 @@ function formatItemFull(item: Item & { annotations: Annotation[] }): string {
     // Truncate content at 2000 chars before escaping to leave room for metadata
     const truncated =
       item.content.length > 2000
-        ? item.content.slice(0, 1997) + "..."
+        ? `${item.content.slice(0, 1997)}...`
         : item.content;
     parts.push(escapeMarkdown(truncated));
   }

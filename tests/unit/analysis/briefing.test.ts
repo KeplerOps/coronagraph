@@ -1,12 +1,4 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  mock,
-  spyOn,
-} from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 
 // ---------------------------------------------------------------------------
 // Mocks -- must be declared before importing the module under test
@@ -195,10 +187,10 @@ describe("generateMorningBrief", () => {
     const result = await generateMorningBrief();
 
     expect(result).not.toBeNull();
-    expect(result!.title).toContain("Morning Brief");
-    expect(result!.content).toBe("Morning brief content");
-    expect(result!.itemIds).toEqual(["recent-item-1"]);
-    expect(result!.briefId).toBe("brief-1");
+    expect(result?.title).toContain("Morning Brief");
+    expect(result?.content).toBe("Morning brief content");
+    expect(result?.itemIds).toEqual(["recent-item-1"]);
+    expect(result?.briefId).toBe("brief-1");
   });
 
   it("includes weekday and date in the title", async () => {
@@ -224,12 +216,12 @@ describe("generateMorningBrief", () => {
       "Friday",
       "Saturday",
     ];
-    const containsWeekday = weekdays.some((day) => result!.title.includes(day));
+    const containsWeekday = weekdays.some((day) => result?.title.includes(day));
     expect(containsWeekday).toBe(true);
 
     // It should contain a year
     const currentYear = new Date().getFullYear().toString();
-    expect(result!.title).toContain(currentYear);
+    expect(result?.title).toContain(currentYear);
   });
 });
 

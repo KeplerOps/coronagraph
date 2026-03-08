@@ -127,6 +127,8 @@ item.get("/items/:id", async (c) => {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-label="External link"
+                  role="img"
                 >
                   <path
                     stroke-linecap="round"
@@ -274,7 +276,7 @@ item.get("/items/:id", async (c) => {
 item.post("/items/:id/annotations", async (c) => {
   const id = c.req.param("id");
   const body = await c.req.parseBody();
-  const note = body["note"];
+  const note = body.note;
 
   if (typeof note !== "string" || !note.trim()) {
     return c.html(

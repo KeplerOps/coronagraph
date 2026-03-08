@@ -22,6 +22,7 @@
     "test": "bun test",
     "test:unit": "bun test tests/unit",
     "test:integration": "bun test tests/integration",
+    "test:e2e": "bun test tests/e2e",
     "test:watch": "bun test --watch"
   },
   "devDependencies": {

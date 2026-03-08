@@ -130,6 +130,14 @@ export function extractAffected(
 
 export class NvdCollector implements Collector {
   readonly source = "nvd";
+  readonly sourceMetadata = {
+    id: "nvd",
+    name: "National Vulnerability Database",
+    type: "api",
+    url: "https://nvd.nist.gov",
+    description:
+      "NIST NVD CVE 2.0 API — recently published CVEs with CVSS scores, CWEs, and affected CPEs",
+  };
 
   async fetch(): Promise<RawItem[]> {
     try {
@@ -174,7 +182,7 @@ export class NvdCollector implements Collector {
       const affected = extractAffected(cve.configurations);
 
       const topics = [...cweIds.map((id) => id.toLowerCase()), "cve"];
-      if (cvss && cvss.severity) {
+      if (cvss?.severity) {
         topics.push(cvss.severity.toLowerCase());
       }
 

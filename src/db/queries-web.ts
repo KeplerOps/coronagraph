@@ -3,7 +3,7 @@
  * Supplements the core queries in queries.ts with brief, collection,
  * source, and scheduled job access.
  */
-import { and, desc, eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { db } from "./client.ts";
 import {
   type Brief,
@@ -114,7 +114,8 @@ export async function createCollection(
     .insert(collections)
     .values({ name, description: description ?? null })
     .returning();
-  return collection!;
+  if (!collection) throw new Error("Failed to insert collection");
+  return collection;
 }
 
 // ---------------------------------------------------------------------------

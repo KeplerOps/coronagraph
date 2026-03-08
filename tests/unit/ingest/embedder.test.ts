@@ -187,6 +187,6 @@ describe("embedder", () => {
 
     // Verify auth header
     const headers = callArgs[1]?.headers as Record<string, string>;
-    expect(headers["Authorization"]).toBe("Bearer test-embedding-key");
+    expect(headers.Authorization).toBe("Bearer test-embedding-key");
   });
 });

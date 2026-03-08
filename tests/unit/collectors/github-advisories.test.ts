@@ -25,7 +25,7 @@ describe("deriveTopics", () => {
       identifiers: null,
       type: "reviewed",
     };
-    const topics = deriveTopics(advisory as any);
+    const topics = deriveTopics(advisory as Parameters<typeof deriveTopics>[0]);
     expect(topics).toEqual(["cwe-79", "cwe-89", "high"]);
   });
 
@@ -44,7 +44,7 @@ describe("deriveTopics", () => {
       identifiers: null,
       type: "reviewed",
     };
-    const topics = deriveTopics(advisory as any);
+    const topics = deriveTopics(advisory as Parameters<typeof deriveTopics>[0]);
     expect(topics).toEqual(["critical"]);
   });
 
@@ -63,7 +63,7 @@ describe("deriveTopics", () => {
       identifiers: null,
       type: "reviewed",
     };
-    const topics = deriveTopics(advisory as any);
+    const topics = deriveTopics(advisory as Parameters<typeof deriveTopics>[0]);
     expect(topics).toEqual([]);
   });
 });
@@ -116,7 +116,8 @@ describe("GithubAdvisoriesCollector.fetch", () => {
     const items = await collector.fetch();
 
     expect(items).toHaveLength(1);
-    const item = items[0]!;
+    if (!items[0]) throw new Error("Expected item");
+    const item = items[0];
     expect(item.sourceId).toBe("GHSA-abcd-1234-efgh");
     expect(item.itemType).toBe("advisory");
     expect(item.title).toBe("Critical XSS in example-lib");
@@ -124,9 +125,10 @@ describe("GithubAdvisoriesCollector.fetch", () => {
     expect(item.url).toBe("https://github.com/advisories/GHSA-abcd-1234-efgh");
     expect(item.topics).toEqual(["cwe-79", "high"]);
     expect(item.publishedAt).toEqual(new Date("2024-01-15T10:00:00Z"));
-    expect((item.meta as any).severity).toBe("high");
-    expect((item.meta as any).cvss_score).toBe(8.1);
-    expect((item.meta as any).cwe_ids).toEqual(["CWE-79"]);
+    const meta = item.meta as Record<string, unknown>;
+    expect(meta.severity).toBe("high");
+    expect(meta.cvss_score).toBe(8.1);
+    expect(meta.cwe_ids).toEqual(["CWE-79"]);
   });
 
   it("returns empty array on API error", async () => {

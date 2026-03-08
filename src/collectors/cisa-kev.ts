@@ -53,6 +53,14 @@ export function nvdUrl(cveId: string): string {
 
 export class CisaKevCollector implements Collector {
   readonly source = "cisa-kev";
+  readonly sourceMetadata = {
+    id: "cisa-kev",
+    name: "CISA Known Exploited Vulnerabilities",
+    type: "catalog",
+    url: "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+    description:
+      "CISA KEV catalog — vulnerabilities with confirmed active exploitation",
+  };
 
   async fetch(): Promise<RawItem[]> {
     try {

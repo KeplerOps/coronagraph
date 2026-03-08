@@ -40,10 +40,6 @@ mock.module("../../../src/config.ts", () => ({
 // Import module under test (after mocks)
 // ---------------------------------------------------------------------------
 
-import type {
-  AlertEvaluation,
-  AlertUrgency,
-} from "../../../src/analysis/alerts.ts";
 import { evaluateAlerts } from "../../../src/analysis/alerts.ts";
 
 // ---------------------------------------------------------------------------

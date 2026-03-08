@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.3.0] - 2026-03-08
+
+### Added
+
+- **Sources table auto-population**: collectors now register themselves in the `sources` table on each collection run via `registerSources()`, with upsert to keep metadata current
+
+## [0.2.0] - 2026-03-07
 
 ### Added
 

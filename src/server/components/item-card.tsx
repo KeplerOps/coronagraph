@@ -115,6 +115,7 @@ export const ItemCardList: FC<{
       {items.length > 0 && hasMore && (
         <div class="mt-6 text-center">
           <button
+            type="button"
             hx-get={`/feed/items?${params.toString()}`}
             hx-target="#items-list"
             hx-swap="innerHTML"

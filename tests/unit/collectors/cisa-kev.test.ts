@@ -97,7 +97,7 @@ describe("CisaKevCollector.fetch", () => {
     const items = await collector.fetch();
 
     expect(items).toHaveLength(1);
-    expect(items[0]!.sourceId).toBe("CVE-2024-9999");
+    expect(items[0]?.sourceId).toBe("CVE-2024-9999");
   });
 
   it("builds correct RawItem with meta fields", async () => {
@@ -111,16 +111,18 @@ describe("CisaKevCollector.fetch", () => {
     const collector = new CisaKevCollector();
     const items = await collector.fetch();
 
-    const item = items[0]!;
+    if (!items[0]) throw new Error("Expected item");
+    const item = items[0];
     expect(item.itemType).toBe("vulnerability");
     expect(item.title).toBe("CVE-2024-9999: Recent Vuln");
     expect(item.content).toBe("A recently added vulnerability");
     expect(item.url).toBe("https://nvd.nist.gov/vuln/detail/CVE-2024-9999");
     expect(item.topics).toContain("known-exploited");
     expect(item.topics).toContain("testvendor");
-    expect((item.meta as any).vendor).toBe("TestVendor");
-    expect((item.meta as any).product).toBe("TestProduct");
-    expect((item.meta as any).knownRansomwareCampaignUse).toBe("Known");
+    const meta = item.meta as Record<string, unknown>;
+    expect(meta.vendor).toBe("TestVendor");
+    expect(meta.product).toBe("TestProduct");
+    expect(meta.knownRansomwareCampaignUse).toBe("Known");
   });
 
   it("returns empty array on API error", async () => {

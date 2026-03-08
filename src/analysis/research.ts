@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { getConfig } from "../config.ts";
 import { db } from "../db/client.ts";
 import { searchItems } from "../db/queries.ts";
-import type { Item, ResearchSession } from "../db/schema.ts";
+import type { Item } from "../db/schema.ts";
 import { researchSessions } from "../db/schema.ts";
 
 // ---------------------------------------------------------------------------

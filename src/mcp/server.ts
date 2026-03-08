@@ -8,7 +8,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { and, desc, eq, gte, type SQL, sql } from "drizzle-orm";
+import { and, desc, gte, type SQL, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getConfig } from "../config.ts";
 import { db } from "../db/client.ts";
@@ -176,8 +176,7 @@ server.tool(
     try {
       const results = await getRecentItems({ source, type, limit });
 
-      const resultText =
-        `${results.length} recent item(s):\n\n` + formatItemList(results);
+      const resultText = `${results.length} recent item(s):\n\n${formatItemList(results)}`;
 
       return { content: [{ type: "text" as const, text: resultText }] };
     } catch (err) {

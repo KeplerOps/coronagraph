@@ -40,6 +40,8 @@ const CollectionCard: FC<{ collection: CollectionWithCount }> = ({
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-label="Items"
+              role="img"
             >
               <path
                 stroke-linecap="round"
@@ -145,8 +147,8 @@ collectionsApp.get("/collections", async (c) => {
 
 collectionsApp.post("/collections", async (c) => {
   const body = await c.req.parseBody();
-  const name = body["name"];
-  const description = body["description"];
+  const name = body.name;
+  const description = body.description;
 
   if (typeof name !== "string" || !name.trim()) {
     return c.html(

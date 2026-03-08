@@ -42,7 +42,6 @@ const {
   splitMessage,
   sendMessage,
   sendBrief,
-  sendAlertNotification,
   sendToDefaultChat,
   sendBriefToDefaultChat,
 } = await import("../../../src/delivery/telegram.ts");
