@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.0] - 2026-03-08
+
+### Security
+
+- **Dependency upgrades**: hono (4.12.3 → 4.12.5), @hono/node-server (→ 1.19.11), esbuild (→ 0.27.3), express-rate-limit (→ 8.3.0) to resolve 6 known vulnerabilities including arbitrary file access, auth bypass, cookie/SSE injection, IPv4-mapped IPv6 bypass, and dev server exposure
+
 ## [0.3.0] - 2026-03-08
 
 ### Added
