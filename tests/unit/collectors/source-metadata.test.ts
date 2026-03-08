@@ -1,10 +1,13 @@
-import { describe, it, expect } from "bun:test";
-import { NvdCollector } from "../../../src/collectors/nvd.ts";
+import { describe, expect, it } from "bun:test";
 import { ArxivCollector } from "../../../src/collectors/arxiv.ts";
+import type {
+  Collector,
+  SourceMetadata,
+} from "../../../src/collectors/base.ts";
 import { CisaKevCollector } from "../../../src/collectors/cisa-kev.ts";
 import { GithubAdvisoriesCollector } from "../../../src/collectors/github-advisories.ts";
 import { InoreaderCollector } from "../../../src/collectors/inoreader.ts";
-import type { Collector, SourceMetadata } from "../../../src/collectors/base.ts";
+import { NvdCollector } from "../../../src/collectors/nvd.ts";
 
 // ---------------------------------------------------------------------------
 // Verify that every collector declares sourceMetadata that is consistent
@@ -38,12 +41,13 @@ describe("collector sourceMetadata", () => {
 
       it("sourceMetadata has a description", () => {
         expect(collector.sourceMetadata.description).toBeString();
-        expect(collector.sourceMetadata.description!.length).toBeGreaterThan(0);
+        expect(collector.sourceMetadata.description?.length).toBeGreaterThan(0);
       });
 
       it("sourceMetadata has a url", () => {
         expect(collector.sourceMetadata.url).toBeString();
-        expect(collector.sourceMetadata.url!).toStartWith("http");
+        if (!collector.sourceMetadata.url) throw new Error("Expected url");
+        expect(collector.sourceMetadata.url).toStartWith("http");
       });
     });
   }
@@ -51,5 +55,17 @@ describe("collector sourceMetadata", () => {
   it("all collectors have unique source IDs", () => {
     const ids = collectors.map((c) => c.sourceMetadata.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("all collectors have unique names", () => {
+    const names = collectors.map((c) => c.sourceMetadata.name);
+    expect(new Set(names).size).toBe(names.length);
+  });
+
+  it("all collectors use a valid source type", () => {
+    const validTypes = ["api", "feed", "catalog"];
+    for (const collector of collectors) {
+      expect(validTypes).toContain(collector.sourceMetadata.type);
+    }
   });
 });

@@ -6,7 +6,7 @@
 // caused by Bun's global mock.module registry.
 // ---------------------------------------------------------------------------
 
-import { describe, it, expect, mock, beforeEach } from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { setupAnthropicMock } from "../../helpers/mock-anthropic.ts";
 
 // ---------------------------------------------------------------------------
@@ -65,11 +65,15 @@ describe("summarizer", () => {
       '{"summary": "A critical vulnerability was found.", "topics": ["web-security", "rce"]}',
     );
 
-    const result = await summarize("Test Title", "Test content", "vulnerability");
+    const result = await summarize(
+      "Test Title",
+      "Test content",
+      "vulnerability",
+    );
 
     expect(result).not.toBeNull();
-    expect(result!.summary).toBe("A critical vulnerability was found.");
-    expect(result!.topics).toEqual(["web-security", "rce"]);
+    expect(result?.summary).toBe("A critical vulnerability was found.");
+    expect(result?.topics).toEqual(["web-security", "rce"]);
   });
 
   // -----------------------------------------------------------------------
@@ -84,8 +88,8 @@ describe("summarizer", () => {
     const result = await summarize("Title", "Content", "paper");
 
     expect(result).not.toBeNull();
-    expect(result!.summary).toBe("Fenced summary");
-    expect(result!.topics).toEqual(["llm"]);
+    expect(result?.summary).toBe("Fenced summary");
+    expect(result?.topics).toEqual(["llm"]);
   });
 
   // -----------------------------------------------------------------------
@@ -143,8 +147,8 @@ describe("summarizer", () => {
     const result = await summarize("Title", "Content", "article");
 
     expect(result).not.toBeNull();
-    expect(result!.summary).toBe("Summary with no topics");
-    expect(result!.topics).toEqual([]);
+    expect(result?.summary).toBe("Summary with no topics");
+    expect(result?.topics).toEqual([]);
   });
 
   // -----------------------------------------------------------------------
@@ -169,9 +173,9 @@ describe("summarizer", () => {
     const longContent = "A".repeat(10000);
     await summarize("Title", longContent, "article");
 
-    expect(capturedInput).toBeDefined();
-    expect(capturedInput!).toContain("A".repeat(4000));
-    expect(capturedInput!).not.toContain("A".repeat(4001));
+    if (!capturedInput) throw new Error("Expected capturedInput");
+    expect(capturedInput).toContain("A".repeat(4000));
+    expect(capturedInput).not.toContain("A".repeat(4001));
   });
 
   // -----------------------------------------------------------------------

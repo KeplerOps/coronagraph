@@ -58,13 +58,14 @@ export class CisaKevCollector implements Collector {
     name: "CISA Known Exploited Vulnerabilities",
     type: "catalog",
     url: "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
-    description: "CISA KEV catalog — vulnerabilities with confirmed active exploitation",
+    description:
+      "CISA KEV catalog — vulnerabilities with confirmed active exploitation",
   };
 
   async fetch(): Promise<RawItem[]> {
     try {
       const res = await fetch(KEV_URL, {
-        headers: { "Accept": "application/json" },
+        headers: { Accept: "application/json" },
       });
 
       if (!res.ok) {
@@ -109,10 +110,7 @@ export class CisaKevCollector implements Collector {
           knownRansomwareCampaignUse: v.knownRansomwareCampaignUse,
           requiredAction: v.requiredAction,
         },
-        topics: [
-          "known-exploited",
-          v.vendorProject.toLowerCase(),
-        ],
+        topics: ["known-exploited", v.vendorProject.toLowerCase()],
         publishedAt: dateAdded,
       });
     }

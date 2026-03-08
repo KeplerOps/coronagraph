@@ -25,7 +25,11 @@ export function mockFetchJson(data: unknown, status = 200) {
  * @param contentType  Content-Type header (default "text/plain")
  * @returns The spy instance for assertions
  */
-export function mockFetchText(text: string, status = 200, contentType = "text/plain") {
+export function mockFetchText(
+  text: string,
+  status = 200,
+  contentType = "text/plain",
+) {
   const spy = spyOn(globalThis, "fetch").mockResolvedValue(
     new Response(text, {
       status,

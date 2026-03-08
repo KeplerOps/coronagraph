@@ -2,8 +2,12 @@
 // Tests for src/ingest/sources.ts
 // ---------------------------------------------------------------------------
 
-import { describe, it, expect, mock, beforeEach } from "bun:test";
-import type { Collector, RawItem, SourceMetadata } from "../../../src/collectors/base.ts";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
+import type {
+  Collector,
+  RawItem,
+  SourceMetadata,
+} from "../../../src/collectors/base.ts";
 
 // ---------------------------------------------------------------------------
 // Mocks -- must be declared before importing the module under test
@@ -19,6 +23,20 @@ const mockUpsertSource = mock(() =>
     lastFetched: null,
     fetchIntervalMinutes: 30,
   }),
+);
+
+const _mockInsertOnConflict = mock(() =>
+  Promise.resolve([
+    {
+      id: "test",
+      name: "Test",
+      type: "api",
+      config: null,
+      enabled: true,
+      lastFetched: null,
+      fetchIntervalMinutes: 30,
+    },
+  ]),
 );
 
 mock.module("../../../src/db/queries.ts", () => ({
@@ -147,5 +165,57 @@ describe("registerSources", () => {
   it("handles empty collector list", async () => {
     await registerSources([]);
     expect(mockUpsertSource).toHaveBeenCalledTimes(0);
+  });
+
+  it("is idempotent — calling twice with same collectors does not error", async () => {
+    const collectors = [makeCollector("nvd", { name: "NVD", type: "api" })];
+
+    await registerSources(collectors);
+    await registerSources(collectors);
+
+    expect(mockUpsertSource).toHaveBeenCalledTimes(2);
+    // Both calls should have received identical args
+    const call1 = mockUpsertSource.mock.calls[0][0] as { id: string };
+    const call2 = mockUpsertSource.mock.calls[1][0] as { id: string };
+    expect(call1.id).toBe(call2.id);
+  });
+
+  it("passes url and description when provided", async () => {
+    const collectors = [
+      makeCollector("test-src", {
+        url: "https://example.com",
+        description: "A test source",
+      }),
+    ];
+
+    await registerSources(collectors);
+
+    const call = mockUpsertSource.mock.calls[0][0] as {
+      url?: string;
+      description?: string;
+    };
+    expect(call.url).toBe("https://example.com");
+    expect(call.description).toBe("A test source");
+  });
+
+  it("passes undefined url and description when not provided", async () => {
+    const collector: Collector = {
+      source: "minimal",
+      sourceMetadata: {
+        id: "minimal",
+        name: "Minimal",
+        type: "api",
+      },
+      fetch: () => Promise.resolve([]),
+    };
+
+    await registerSources([collector]);
+
+    const call = mockUpsertSource.mock.calls[0][0] as {
+      url?: string;
+      description?: string;
+    };
+    expect(call.url).toBeUndefined();
+    expect(call.description).toBeUndefined();
   });
 });

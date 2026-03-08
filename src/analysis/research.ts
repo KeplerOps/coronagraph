@@ -3,12 +3,12 @@
 // ---------------------------------------------------------------------------
 
 import Anthropic from "@anthropic-ai/sdk";
-import { getConfig } from "../config.ts";
-import { searchItems } from "../db/queries.ts";
-import { db } from "../db/client.ts";
-import { researchSessions } from "../db/schema.ts";
 import { eq } from "drizzle-orm";
-import type { Item, ResearchSession } from "../db/schema.ts";
+import { getConfig } from "../config.ts";
+import { db } from "../db/client.ts";
+import { searchItems } from "../db/queries.ts";
+import type { Item } from "../db/schema.ts";
+import { researchSessions } from "../db/schema.ts";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -61,7 +61,8 @@ function getClient(): Anthropic | null {
 // ---------------------------------------------------------------------------
 
 function formatSearchResults(items: Item[]): string {
-  if (items.length === 0) return "No relevant items found in the knowledge base.";
+  if (items.length === 0)
+    return "No relevant items found in the knowledge base.";
   return items
     .map(
       (item, i) =>
@@ -93,7 +94,9 @@ const SYSTEM_PROMPT =
 // Start a new research session
 // ---------------------------------------------------------------------------
 
-export async function startSession(topic: string): Promise<SessionResult | null> {
+export async function startSession(
+  topic: string,
+): Promise<SessionResult | null> {
   const anthropic = getClient();
   if (!anthropic) {
     console.log("[research] No ANTHROPIC_API_KEY configured, skipping");
@@ -244,7 +247,9 @@ export async function query(
 
   await db
     .update(researchSessions)
-    .set({ transcript: updatedTranscript as unknown as Record<string, unknown> })
+    .set({
+      transcript: updatedTranscript as unknown as Record<string, unknown>,
+    })
     .where(eq(researchSessions.id, sessionId));
 
   return { answer, itemsReferenced };

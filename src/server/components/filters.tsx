@@ -41,6 +41,8 @@ export const Filters: FC<{
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-label="Search"
+            role="img"
           >
             <path
               stroke-linecap="round"

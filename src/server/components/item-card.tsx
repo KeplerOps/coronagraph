@@ -1,7 +1,12 @@
 import type { FC } from "hono/jsx";
 import type { Item } from "../../db/schema.ts";
+import {
+  sourceColor,
+  sourceLabel,
+  typeColor,
+  typeLabel,
+} from "../lib/badges.ts";
 import { relativeTime, truncate } from "../lib/format.ts";
-import { sourceColor, typeColor, sourceLabel, typeLabel } from "../lib/badges.ts";
 
 export const ItemCard: FC<{ item: Item }> = ({ item }) => {
   const timeAgo = relativeTime(item.publishedAt);
@@ -110,14 +115,13 @@ export const ItemCardList: FC<{
       {items.length > 0 && hasMore && (
         <div class="mt-6 text-center">
           <button
+            type="button"
             hx-get={`/feed/items?${params.toString()}`}
             hx-target="#items-list"
             hx-swap="innerHTML"
             class="px-4 py-2 text-sm text-gray-400 bg-gray-900 border border-gray-800 rounded-lg hover:bg-gray-800 hover:text-gray-200 hover:border-gray-700 transition-colors"
           >
-            <span class="htmx-indicator mr-2">
-              Loading...
-            </span>
+            <span class="htmx-indicator mr-2">Loading...</span>
             Load more
           </button>
         </div>

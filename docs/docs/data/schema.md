@@ -153,7 +153,7 @@ Generated briefs and digests.
 
 ### sources
 
-Collector configuration (used by settings page).
+Collector configuration, auto-populated from collector metadata on each collection run via `registerSources()`.
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|

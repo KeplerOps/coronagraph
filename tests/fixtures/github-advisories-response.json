@@ -13,7 +13,9 @@
     ],
     "references": [
       { "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-2001" },
-      { "url": "https://github.com/example/example-package/security/advisories/GHSA-abcd-1234-efgh" }
+      {
+        "url": "https://github.com/example/example-package/security/advisories/GHSA-abcd-1234-efgh"
+      }
     ],
     "published_at": "2025-01-15T10:00:00Z",
     "updated_at": "2025-01-15T12:00:00Z",
@@ -50,9 +52,7 @@
       { "type": "GHSA", "value": "GHSA-wxyz-5678-ijkl" },
       { "type": "CVE", "value": "CVE-2025-2002" }
     ],
-    "references": [
-      { "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-2002" }
-    ],
+    "references": [{ "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-2002" }],
     "published_at": "2025-01-14T08:00:00Z",
     "updated_at": "2025-01-14T09:30:00Z",
     "withdrawn_at": null,

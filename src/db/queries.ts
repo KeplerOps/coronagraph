@@ -1,22 +1,20 @@
-import { eq, desc, and, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, type SQL, sql } from "drizzle-orm";
 import { db } from "./client";
 import {
-  items,
-  annotations,
-  sources,
-  type NewItem,
-  type Item,
   type Annotation,
+  annotations,
+  type Item,
+  items,
+  type NewItem,
   type Source,
+  sources,
 } from "./schema";
 
 // ---------------------------------------------------------------------------
 // insertItem  --  upsert (insert or do nothing on source+source_id conflict)
 // ---------------------------------------------------------------------------
 
-export async function insertItem(
-  item: NewItem,
-): Promise<Item> {
+export async function insertItem(item: NewItem): Promise<Item> {
   const [inserted] = await db
     .insert(items)
     .values(item)
@@ -31,9 +29,13 @@ export async function insertItem(
     const [existing] = await db
       .select()
       .from(items)
-      .where(and(eq(items.source, item.source), eq(items.sourceId, item.sourceId)))
+      .where(
+        and(eq(items.source, item.source), eq(items.sourceId, item.sourceId)),
+      )
       .limit(1);
-    return existing!;
+    if (!existing)
+      throw new Error(`Item not found: ${item.source}/${item.sourceId}`);
+    return existing;
   }
 
   return inserted;
@@ -149,11 +151,7 @@ export async function similarItems(
 export async function getItem(
   id: string,
 ): Promise<(Item & { annotations: Annotation[] }) | null> {
-  const [item] = await db
-    .select()
-    .from(items)
-    .where(eq(items.id, id))
-    .limit(1);
+  const [item] = await db.select().from(items).where(eq(items.id, id)).limit(1);
 
   if (!item) return null;
 
@@ -179,7 +177,8 @@ export async function addAnnotation(
     .values({ itemId, note })
     .returning();
 
-  return annotation!;
+  if (!annotation) throw new Error("Failed to insert annotation");
+  return annotation;
 }
 
 // ---------------------------------------------------------------------------
@@ -217,5 +216,6 @@ export async function upsertSource(input: UpsertSourceInput): Promise<Source> {
     })
     .returning();
 
-  return result!;
+  if (!result) throw new Error(`Failed to upsert source: ${input.id}`);
+  return result;
 }

@@ -2,12 +2,12 @@
 // CLI entry point for running a full collection + ingestion cycle
 // ---------------------------------------------------------------------------
 
-import { InoreaderCollector } from "../collectors/inoreader.ts";
-import { NvdCollector } from "../collectors/nvd.ts";
 import { ArxivCollector } from "../collectors/arxiv.ts";
 import { CisaKevCollector } from "../collectors/cisa-kev.ts";
 import { GithubAdvisoriesCollector } from "../collectors/github-advisories.ts";
-import { ingestAll, type IngestResult } from "../ingest/pipeline.ts";
+import { InoreaderCollector } from "../collectors/inoreader.ts";
+import { NvdCollector } from "../collectors/nvd.ts";
+import { ingestAll } from "../ingest/pipeline.ts";
 import { registerSources } from "../ingest/sources.ts";
 
 async function main(): Promise<void> {

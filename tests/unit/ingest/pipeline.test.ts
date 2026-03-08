@@ -7,7 +7,15 @@
 // The insertItem DB call is mocked since it requires a database connection.
 // ---------------------------------------------------------------------------
 
-import { describe, it, expect, mock, beforeEach, afterEach, spyOn } from "bun:test";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from "bun:test";
 import type { Collector, RawItem } from "../../../src/collectors/base.ts";
 
 // ---------------------------------------------------------------------------
@@ -113,9 +121,7 @@ function makeVoyageFetchResponse() {
   return new Response(
     JSON.stringify({
       object: "list",
-      data: [
-        { object: "embedding", index: 0, embedding: [0.1, 0.2, 0.3] },
-      ],
+      data: [{ object: "embedding", index: 0, embedding: [0.1, 0.2, 0.3] }],
       model: "voyage-3",
       usage: { total_tokens: 10 },
     }),

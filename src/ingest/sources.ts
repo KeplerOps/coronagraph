@@ -26,10 +26,7 @@ export async function registerSources(collectors: Collector[]): Promise<void> {
       });
       console.log(`[sources] Registered: ${meta.id} (${meta.name})`);
     } catch (err) {
-      console.error(
-        `[sources] Failed to register ${collector.source}:`,
-        err,
-      );
+      console.error(`[sources] Failed to register ${collector.source}:`, err);
     }
   }
 }

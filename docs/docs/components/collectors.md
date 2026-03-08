@@ -18,8 +18,17 @@ interface RawItem {
   publishedAt?: Date;
 }
 
+interface SourceMetadata {
+  id: string;
+  name: string;
+  type: string;
+  url?: string;
+  description?: string;
+}
+
 interface Collector {
   readonly source: string;
+  readonly sourceMetadata: SourceMetadata;
   fetch(): Promise<RawItem[]>;
 }
 ```
@@ -29,6 +38,11 @@ Every collector must:
 - Return `RawItem[]` (never throw — errors are caught by the pipeline)
 - Set a unique `source` identifier used for deduplication
 - Provide a stable `sourceId` per item (combined with `source` for upsert key)
+- Declare `sourceMetadata` describing the source for auto-registration
+
+## Source Auto-Registration
+
+On each collection run, `registerSources()` upserts every collector's `sourceMetadata` into the `sources` table. This keeps the table in sync with active collectors without manual configuration. Errors are logged but never thrown — a failed upsert does not block the collection run.
 
 ## Collector Summary
 

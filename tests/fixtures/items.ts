@@ -1,5 +1,5 @@
-import type { Item } from "../../src/db/schema.ts";
 import type { RawItem } from "../../src/collectors/base.ts";
+import type { Item } from "../../src/db/schema.ts";
 
 let counter = 0;
 

@@ -70,7 +70,8 @@ export class GithubAdvisoriesCollector implements Collector {
     name: "GitHub Security Advisories",
     type: "api",
     url: "https://github.com/advisories",
-    description: "GitHub Advisory Database — reviewed security advisories for open-source packages",
+    description:
+      "GitHub Advisory Database — reviewed security advisories for open-source packages",
   };
 
   async fetch(): Promise<RawItem[]> {
@@ -80,7 +81,7 @@ export class GithubAdvisoriesCollector implements Collector {
       url.searchParams.set("per_page", "50");
 
       const headers: Record<string, string> = {
-        "Accept": "application/vnd.github+json",
+        Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
       };
 
