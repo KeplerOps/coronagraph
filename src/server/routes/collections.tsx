@@ -10,6 +10,9 @@ import { ItemCard } from "../components/item-card.tsx";
 import BaseLayout from "../layouts/base.tsx";
 import { formatDate, relativeTime } from "../lib/format.ts";
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const collectionsApp = new Hono();
 
 // ---------------------------------------------------------------------------
@@ -175,6 +178,11 @@ collectionsApp.post("/collections", async (c) => {
 
 collectionsApp.get("/collections/:id", async (c) => {
   const id = c.req.param("id");
+
+  if (!UUID_RE.test(id)) {
+    return c.text("Invalid collection ID", 400);
+  }
+
   const collection = await getCollection(id);
 
   if (!collection) {

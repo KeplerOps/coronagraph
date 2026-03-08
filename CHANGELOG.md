@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.5.0] - 2026-03-08
+
+### Security
+
+- **SQL injection prevention**: validate embedding arrays contain only finite numbers before vector literal construction (#25)
+- **Bounded query parameters**: clamp `limit` to max 200, default on NaN, ensure non-negative `offset` (#29)
+- **UUID validation**: validate UUID format on all `:id` route params, return 400 for invalid (#31)
+
+### Added
+
+- 20 new tests covering all input validation logic
+
 ## [0.4.0] - 2026-03-08
 
 ### Security

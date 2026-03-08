@@ -11,6 +11,9 @@ import {
 } from "../lib/badges.ts";
 import { formatDate, relativeTime } from "../lib/format.ts";
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const item = new Hono();
 
 // ---------------------------------------------------------------------------
@@ -50,6 +53,11 @@ const AnnotationList: FC<{ annotations: Annotation[] }> = ({ annotations }) => (
 
 item.get("/items/:id", async (c) => {
   const id = c.req.param("id");
+
+  if (!UUID_RE.test(id)) {
+    return c.text("Invalid item ID", 400);
+  }
+
   const result = await getItem(id);
 
   if (!result) {
@@ -275,6 +283,11 @@ item.get("/items/:id", async (c) => {
 
 item.post("/items/:id/annotations", async (c) => {
   const id = c.req.param("id");
+
+  if (!UUID_RE.test(id)) {
+    return c.text("Invalid item ID", 400);
+  }
+
   const body = await c.req.parseBody();
   const note = body.note;
 
