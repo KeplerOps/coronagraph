@@ -4,10 +4,10 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 import { getConfig } from "../config.ts";
-import { getRecentItems } from "../db/queries.ts";
 import { db } from "../db/client.ts";
-import { briefs } from "../db/schema.ts";
+import { getRecentItems } from "../db/queries.ts";
 import type { Item } from "../db/schema.ts";
+import { briefs } from "../db/schema.ts";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -215,11 +215,14 @@ export async function generateWeeklyDigest(): Promise<BriefResult | null> {
   const content =
     response.content[0]?.type === "text" ? response.content[0].text : "";
 
-  const title = `Weekly Digest - Week of ${new Date().toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  })}`;
+  const title = `Weekly Digest - Week of ${new Date().toLocaleDateString(
+    "en-US",
+    {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    },
+  )}`;
 
   const [brief] = await db
     .insert(briefs)

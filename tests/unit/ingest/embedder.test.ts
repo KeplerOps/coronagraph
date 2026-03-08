@@ -2,7 +2,15 @@
 // Tests for src/ingest/embedder.ts
 // ---------------------------------------------------------------------------
 
-import { describe, it, expect, mock, beforeEach, afterEach, spyOn } from "bun:test";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from "bun:test";
 
 // ---------------------------------------------------------------------------
 // Mocks -- must be declared before importing the module under test
@@ -96,7 +104,10 @@ describe("embedder", () => {
   // -----------------------------------------------------------------------
 
   it("returns null when no EMBEDDING_API_KEY configured", async () => {
-    currentConfig = { ...defaultConfig, EMBEDDING_API_KEY: undefined as unknown as string };
+    currentConfig = {
+      ...defaultConfig,
+      EMBEDDING_API_KEY: undefined as unknown as string,
+    };
 
     const result = await embed("Test text");
 
@@ -176,6 +187,6 @@ describe("embedder", () => {
 
     // Verify auth header
     const headers = callArgs[1]?.headers as Record<string, string>;
-    expect(headers["Authorization"]).toBe("Bearer test-embedding-key");
+    expect(headers.Authorization).toBe("Bearer test-embedding-key");
   });
 });

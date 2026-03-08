@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "bun:test";
 
 /**
  * Tests for the embedding validation in similarItems().
@@ -24,14 +24,20 @@ describe("similarItems embedding validation", () => {
   });
 
   it("rejects NaN values", () => {
-    expect(() => validateEmbedding([0.1, NaN, 0.3])).toThrow("Invalid embedding");
+    expect(() => validateEmbedding([0.1, NaN, 0.3])).toThrow(
+      "Invalid embedding",
+    );
   });
 
   it("rejects Infinity", () => {
-    expect(() => validateEmbedding([0.1, Infinity, 0.3])).toThrow("Invalid embedding");
+    expect(() => validateEmbedding([0.1, Infinity, 0.3])).toThrow(
+      "Invalid embedding",
+    );
   });
 
   it("rejects -Infinity", () => {
-    expect(() => validateEmbedding([0.1, -Infinity, 0.3])).toThrow("Invalid embedding");
+    expect(() => validateEmbedding([0.1, -Infinity, 0.3])).toThrow(
+      "Invalid embedding",
+    );
   });
 });

@@ -5,16 +5,15 @@
 // ---------------------------------------------------------------------------
 
 import { Bot } from "grammy";
-import { getConfig } from "../config.ts";
-import { getRecentItems, searchItems, getItem } from "../db/queries.ts";
 import { generateMorningBrief } from "../analysis/briefing.ts";
 import {
-  startSession,
-  query as researchQuery,
   endSession,
+  query as researchQuery,
+  startSession,
 } from "../analysis/research.ts";
-import type { Item } from "../db/schema.ts";
-import type { Annotation } from "../db/schema.ts";
+import { getConfig } from "../config.ts";
+import { getItem, getRecentItems, searchItems } from "../db/queries.ts";
+import type { Annotation, Item } from "../db/schema.ts";
 
 // ---------------------------------------------------------------------------
 // Bootstrap
@@ -45,7 +44,7 @@ const TELEGRAM_MAX_LENGTH = 4096;
  * Escape all MarkdownV2 special characters so Telegram parses them literally.
  */
 function escapeMarkdown(text: string): string {
-  return text.replace(/[_*\[\]()~`>#+\-=|{}.!\\]/g, "\\$&");
+  return text.replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, "\\$&");
 }
 
 /**
@@ -122,7 +121,7 @@ function formatItemShort(item: Item, index?: number): string {
   if (item.summary) {
     const summary = escapeMarkdown(
       item.summary.length > 150
-        ? item.summary.slice(0, 147) + "..."
+        ? `${item.summary.slice(0, 147)}...`
         : item.summary,
     );
     line += `   ${summary}\n`;
@@ -132,9 +131,7 @@ function formatItemShort(item: Item, index?: number): string {
   return line;
 }
 
-function formatItemFull(
-  item: Item & { annotations: Annotation[] },
-): string {
+function formatItemFull(item: Item & { annotations: Annotation[] }): string {
   const parts: string[] = [];
 
   parts.push(`*${escapeMarkdown(item.title || "Untitled")}*`);
@@ -169,7 +166,7 @@ function formatItemFull(
     // Truncate content at 2000 chars before escaping to leave room for metadata
     const truncated =
       item.content.length > 2000
-        ? item.content.slice(0, 1997) + "..."
+        ? `${item.content.slice(0, 1997)}...`
         : item.content;
     parts.push(escapeMarkdown(truncated));
   }
@@ -225,9 +222,12 @@ bot.command("start", async (ctx) => {
 bot.command("brief", async (ctx) => {
   const chatId = ctx.chat.id;
 
-  await ctx.reply(escapeMarkdown("Generating morning brief... this may take a moment."), {
-    parse_mode: "MarkdownV2",
-  });
+  await ctx.reply(
+    escapeMarkdown("Generating morning brief... this may take a moment."),
+    {
+      parse_mode: "MarkdownV2",
+    },
+  );
 
   try {
     const brief = await generateMorningBrief();
@@ -251,7 +251,9 @@ bot.command("brief", async (ctx) => {
   } catch (err) {
     console.error("[bot] /brief error:", err);
     await ctx.reply(
-      escapeMarkdown("An error occurred while generating the brief. Please try again later."),
+      escapeMarkdown(
+        "An error occurred while generating the brief. Please try again later.",
+      ),
       { parse_mode: "MarkdownV2" },
     );
   }
@@ -303,7 +305,9 @@ bot.command("search", async (ctx) => {
 
   if (!queryText) {
     await ctx.reply(
-      escapeMarkdown("Usage: /search <query>\nExample: /search LLM vulnerability"),
+      escapeMarkdown(
+        "Usage: /search <query>\nExample: /search LLM vulnerability",
+      ),
       { parse_mode: "MarkdownV2" },
     );
     return;
@@ -313,10 +317,9 @@ bot.command("search", async (ctx) => {
     const results = await searchItems(queryText, 5);
 
     if (results.length === 0) {
-      await ctx.reply(
-        escapeMarkdown(`No results found for "${queryText}".`),
-        { parse_mode: "MarkdownV2" },
-      );
+      await ctx.reply(escapeMarkdown(`No results found for "${queryText}".`), {
+        parse_mode: "MarkdownV2",
+      });
       return;
     }
 
@@ -327,10 +330,9 @@ bot.command("search", async (ctx) => {
     await sendLongMessage(chatId, fullMessage);
   } catch (err) {
     console.error("[bot] /search error:", err);
-    await ctx.reply(
-      escapeMarkdown("An error occurred while searching."),
-      { parse_mode: "MarkdownV2" },
-    );
+    await ctx.reply(escapeMarkdown("An error occurred while searching."), {
+      parse_mode: "MarkdownV2",
+    });
   }
 });
 
@@ -344,7 +346,9 @@ bot.command("item", async (ctx) => {
 
   if (!itemId) {
     await ctx.reply(
-      escapeMarkdown("Usage: /item <id>\nCopy an ID from /recent or /search results."),
+      escapeMarkdown(
+        "Usage: /item <id>\nCopy an ID from /recent or /search results.",
+      ),
       { parse_mode: "MarkdownV2" },
     );
     return;
@@ -354,10 +358,9 @@ bot.command("item", async (ctx) => {
     const item = await getItem(itemId);
 
     if (!item) {
-      await ctx.reply(
-        escapeMarkdown(`Item not found: ${itemId}`),
-        { parse_mode: "MarkdownV2" },
-      );
+      await ctx.reply(escapeMarkdown(`Item not found: ${itemId}`), {
+        parse_mode: "MarkdownV2",
+      });
       return;
     }
 
@@ -426,8 +429,7 @@ bot.command("research", async (ctx) => {
     const itemsLine = `*Items found:* ${escapeMarkdown(String(session.itemsFound))}\n\n`;
     const findingsHeader = `*Initial Findings*\n`;
     const findings = escapeMarkdown(session.initialFindings);
-    const footer =
-      `\n\n_Send follow\\-up questions as regular messages\\. Use /end to close the session\\._`;
+    const footer = `\n\n_Send follow\\-up questions as regular messages\\. Use /end to close the session\\._`;
 
     const fullMessage =
       header + topicLine + itemsLine + findingsHeader + findings + footer;
@@ -450,10 +452,9 @@ bot.command("end", async (ctx) => {
   const sessionId = activeSessions.get(chatId);
 
   if (!sessionId) {
-    await ctx.reply(
-      escapeMarkdown("No active research session to end."),
-      { parse_mode: "MarkdownV2" },
-    );
+    await ctx.reply(escapeMarkdown("No active research session to end."), {
+      parse_mode: "MarkdownV2",
+    });
     return;
   }
 
@@ -525,7 +526,9 @@ bot.on("message:text", async (ctx) => {
     } catch (err) {
       console.error("[bot] research query error:", err);
       await ctx.reply(
-        escapeMarkdown("An error occurred while processing your research question."),
+        escapeMarkdown(
+          "An error occurred while processing your research question.",
+        ),
         { parse_mode: "MarkdownV2" },
       );
     }
@@ -535,10 +538,9 @@ bot.on("message:text", async (ctx) => {
       const results = await searchItems(text, 5);
 
       if (results.length === 0) {
-        await ctx.reply(
-          escapeMarkdown(`No results found for "${text}".`),
-          { parse_mode: "MarkdownV2" },
-        );
+        await ctx.reply(escapeMarkdown(`No results found for "${text}".`), {
+          parse_mode: "MarkdownV2",
+        });
         return;
       }
 
@@ -549,10 +551,9 @@ bot.on("message:text", async (ctx) => {
       await sendLongMessage(chatId, fullMessage);
     } catch (err) {
       console.error("[bot] search error:", err);
-      await ctx.reply(
-        escapeMarkdown("An error occurred while searching."),
-        { parse_mode: "MarkdownV2" },
-      );
+      await ctx.reply(escapeMarkdown("An error occurred while searching."), {
+        parse_mode: "MarkdownV2",
+      });
     }
   }
 });

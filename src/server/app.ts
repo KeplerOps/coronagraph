@@ -1,15 +1,15 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { getRecentItems, getItem } from "../db/queries.ts";
-
+import { getItem, getRecentItems } from "../db/queries.ts";
+import briefsRoutes from "./routes/briefs.tsx";
+import collectionsRoutes from "./routes/collections.tsx";
 // Web dashboard routes
 import feedRoutes from "./routes/feed.tsx";
 import itemRoutes from "./routes/item.tsx";
-import briefsRoutes from "./routes/briefs.tsx";
-import collectionsRoutes from "./routes/collections.tsx";
 import settingsRoutes from "./routes/settings.tsx";
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const app = new Hono();
 
@@ -36,7 +36,10 @@ app.get("/api/items", async (c) => {
   const type = c.req.query("type");
   const limitRaw = parseInt(c.req.query("limit") ?? "", 10);
   const offsetRaw = parseInt(c.req.query("offset") ?? "", 10);
-  const limit = Math.min(Number.isNaN(limitRaw) ? 50 : Math.max(0, limitRaw), 200);
+  const limit = Math.min(
+    Number.isNaN(limitRaw) ? 50 : Math.max(0, limitRaw),
+    200,
+  );
   const offset = Number.isNaN(offsetRaw) ? 0 : Math.max(0, offsetRaw);
 
   try {

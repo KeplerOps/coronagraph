@@ -97,6 +97,20 @@ VALUES ($itemId, $note)
 RETURNING *;
 ```
 
+### upsertSource
+
+```sql
+INSERT INTO sources (id, name, type, config)
+VALUES ($id, $name, $type, $config)
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  type = EXCLUDED.type,
+  config = EXCLUDED.config
+RETURNING *;
+```
+
+Used by `registerSources()` during collection runs to keep the sources table in sync with active collectors.
+
 ## Web Dashboard Queries
 
 ### getRecentBriefs

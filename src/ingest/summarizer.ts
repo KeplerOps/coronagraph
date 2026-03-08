@@ -8,7 +8,9 @@ import { getConfig } from "../config.ts";
 let client: Anthropic | null = null;
 
 /** Reset the cached client (for testing). */
-export function _resetClient() { client = null; }
+export function _resetClient() {
+  client = null;
+}
 
 function getClient(): Anthropic | null {
   const config = getConfig();
@@ -73,9 +75,7 @@ Respond in JSON format exactly like this:
 
     return {
       summary: parsed.summary || "",
-      topics: Array.isArray(parsed.topics)
-        ? (parsed.topics as string[])
-        : [],
+      topics: Array.isArray(parsed.topics) ? (parsed.topics as string[]) : [],
     };
   } catch (err) {
     console.error("[summarizer] Error:", err);

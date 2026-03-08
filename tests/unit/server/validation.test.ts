@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 
 // ---------------------------------------------------------------------------
 // Mocks -- must be declared before importing app
@@ -46,9 +46,9 @@ const INVALID_IDS = [
   "not-a-uuid",
   "12345",
   "'; DROP TABLE items; --",
-  "a1b2c3d4-e5f6-7890-abcd-ef123456789",   // too short
-  "a1b2c3d4-e5f6-7890-abcd-ef12345678901",  // too long
-  "g1b2c3d4-e5f6-7890-abcd-ef1234567890",   // invalid hex char
+  "a1b2c3d4-e5f6-7890-abcd-ef123456789", // too short
+  "a1b2c3d4-e5f6-7890-abcd-ef12345678901", // too long
+  "g1b2c3d4-e5f6-7890-abcd-ef1234567890", // invalid hex char
 ];
 
 describe("UUID validation", () => {

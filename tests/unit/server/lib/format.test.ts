@@ -1,5 +1,9 @@
-import { describe, it, expect } from "bun:test";
-import { relativeTime, formatDate, truncate } from "../../../../src/server/lib/format.ts";
+import { describe, expect, it } from "bun:test";
+import {
+  formatDate,
+  relativeTime,
+  truncate,
+} from "../../../../src/server/lib/format.ts";
 
 describe("format", () => {
   // -----------------------------------------------------------------------
@@ -40,7 +44,9 @@ describe("format", () => {
 
     it("returns weeks ago for a date between 7 and 29 days ago", () => {
       const now = new Date();
-      const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+      const fourteenDaysAgo = new Date(
+        now.getTime() - 14 * 24 * 60 * 60 * 1000,
+      );
       expect(relativeTime(fourteenDaysAgo)).toBe("2w ago");
     });
 

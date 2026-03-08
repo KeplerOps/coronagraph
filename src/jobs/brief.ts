@@ -37,7 +37,9 @@ async function main(): Promise<void> {
       : await generateMorningBrief();
 
   if (!result) {
-    console.log(`[brief] No ${briefType} brief generated (no items or no API key)`);
+    console.log(
+      `[brief] No ${briefType} brief generated (no items or no API key)`,
+    );
     process.exit(0);
   }
 
